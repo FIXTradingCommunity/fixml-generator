@@ -18,11 +18,8 @@ package io.fixprotocol.orchestra.fixml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.StringWriter;
-
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -31,7 +28,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import net.sf.saxon.TransformerFactoryImpl;
 
 
@@ -43,6 +41,9 @@ import net.sf.saxon.TransformerFactoryImpl;
  */
 public class FixmlGenerator {
 
+  static final Logger parentLogger = LogManager.getLogger();
+
+
   /**
    * Generates FIXML schemas from an Orchestra file
    * 
@@ -50,12 +51,11 @@ public class FixmlGenerator {
    *        <ol>
    *        <li>The name of an Orchestra file (required)</li>
    *        <li>The path for output (required)</li>
-   *        <li>An error file -- defaults to err console</li>
    *        </ol>
    * @throws FileNotFoundException if the input file is not found
    * @throws TransformerException if an unrecoverable transformation error occurs
    */
-  public static void main(String[] args) throws FileNotFoundException, TransformerException {
+  public static void main(String[] args) throws Exception {
     if (args.length < 2) {
       usage();
       System.exit(1);
@@ -64,47 +64,44 @@ public class FixmlGenerator {
     outdir.mkdirs();
     String outPath = outdir.getAbsolutePath();
 
-    final PrintStream errorStream;
-    if (args.length > 2) {
-      File errorFile = new File(args[2]);
-      errorFile.getParentFile().mkdirs();
-      errorStream = new PrintStream(new FileOutputStream(errorFile));
-    } else {
-      errorStream = System.err;
+    try (final InputStream inputXml = new FileInputStream(args[0])) {
+      final Source xmlSource = new StreamSource(inputXml);
+      final StringWriter sw = new StringWriter();
+      final Result result = new StreamResult(sw);
+
+      final TransformerFactory transFact = new TransformerFactoryImpl();
+      final ClassLoader classLoader = FixmlGenerator.class.getClassLoader();
+      final InputStream xsltStream =
+          classLoader.getResourceAsStream("xsl/FIXMLSchemaGenerator.xsl");
+      final Source xsltSource = new StreamSource(xsltStream);
+      final Transformer trans = transFact.newTransformer(xsltSource);
+      trans.setParameter("targetDir", outPath);
+      trans.setErrorListener(new ErrorListener() {
+
+        public void error(TransformerException exception) throws TransformerException {
+          parentLogger.error(exception.getMessageAndLocation());
+        }
+
+        public void fatalError(TransformerException exception) throws TransformerException {
+          parentLogger.fatal(exception.getMessageAndLocation());
+        }
+
+        public void warning(TransformerException exception) throws TransformerException {
+          parentLogger.warn(exception.getMessageAndLocation());
+        }
+
+      });
+      trans.transform(xmlSource, result);
+      parentLogger.info("FixmlGenerator complete");
+    } catch (Exception e) {
+      parentLogger.fatal("FiximateGenerator failed", e);
+      throw e;
     }
-
-    InputStream inputXml = new FileInputStream(args[0]);
-    Source xmlSource = new StreamSource(inputXml);
-    StringWriter sw = new StringWriter();
-    Result result = new StreamResult(sw);
-
-    TransformerFactory transFact = new TransformerFactoryImpl();
-    ClassLoader classLoader = FixmlGenerator.class.getClassLoader();
-    InputStream xsltStream = classLoader.getResourceAsStream("xsl/FIXMLSchemaGenerator.xsl");
-    Source xsltSource = new StreamSource(xsltStream);
-    Transformer trans = transFact.newTransformer(xsltSource);
-    trans.setParameter("targetDir", outPath);
-    trans.setErrorListener(new ErrorListener() {
-
-      public void warning(TransformerException exception) throws TransformerException {
-        errorStream.println(String.format("WARN:  %s", exception.getMessageAndLocation()));
-      }
-
-      public void error(TransformerException exception) throws TransformerException {
-        errorStream.println(String.format("ERROR: %s", exception.getMessageAndLocation()));
-      }
-
-      public void fatalError(TransformerException exception) throws TransformerException {
-        errorStream.println(String.format("FATAL: %s", exception.getMessageAndLocation()));
-      }
-
-    });
-    trans.transform(xmlSource, result);
   }
 
   public static void usage() {
     System.err.println(
-        "Usage: java io.fixprotocol.orchestra.fixml.FixmlGenerator <orchestra-file> <output-dir> [error-file]");
+        "Usage: java io.fixprotocol.orchestra.fixml.FixmlGenerator <orchestra-file> <output-dir>");
   }
 
 }
