@@ -31,7 +31,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 </xsl:text>
 	</xsl:template>
 	<xsl:template name="fixml-namespace">
-		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
+		<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,".")"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
 
