@@ -5,9 +5,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ master ]
+    branches: [ orchestra-v1-0 ]
   pull_request:
-    branches: [ master ]
+    branches: [ orchestra-v1-0 ]
 
 jobs:
   build:
