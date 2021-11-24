@@ -4,9 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.fixprotocol.orchestra</groupId>
 	<artifactId>fixml-generator</artifactId>
-	<version>1.4.1-RC5-SNAPSHOT</version>
+	<version>1.4.2-SNAPSHOT</version>
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>FIXML schema generator from from Orchestra / FIX Repository 2016 Edition</description>
+	<description>FIXML schema generator from from Orchestra</description>
 	<prerequisites>
 		<maven>3.0.5</maven>
 	</prerequisites>
@@ -14,9 +14,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
-		<junit.version>5.5.2</junit.version>
-		<log4j.version>2.12.1</log4j.version>
-		<saxon.version>9.9.1-5</saxon.version>
+		<junit.version>5.8.1</junit.version>
+		<log4j.version>2.14.1</log4j.version>
+		<saxon.version>10.6</saxon.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -58,6 +58,31 @@
 				<artifactId>versions-maven-plugin</artifactId>
 				<version>2.7</version>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<archive>
+								<manifest>
+									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+									<mainClass>io.fixprotocol.orchestra.fixml.FixmlGenerator</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
 		</plugins>
 	</build>
 </project>
