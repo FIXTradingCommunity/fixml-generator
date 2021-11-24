@@ -698,7 +698,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:apply-templates/>
 	</xsl:template>
 	<xsl:template match="fixr:repository">
-		<xsl:variable name="VersionString" select="@name"/>
+		<xsl:variable name="VersionString" select="substring-after(@name,'.')"/>
 		<xsl:variable name="FileSuffix" select="concat('-',$VersionString,'.xsd')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
