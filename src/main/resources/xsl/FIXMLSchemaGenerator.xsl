@@ -699,8 +699,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 	</xsl:template>
 	<xsl:template match="fixr:repository">
 		<xsl:variable name="VersionString" select="@name"/>
-		<!-- <xsl:variable name="FileSuffix" select="concat('-',$VersionString,'.xsd')"/> -->
-		<xsl:variable name="FileSuffix" select="concat('-','Latest','.xsd')"/>
+		<xsl:variable name="FileSuffix" select="concat('-',$VersionString,'.xsd')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
 
