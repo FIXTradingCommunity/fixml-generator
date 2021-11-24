@@ -18,13 +18,13 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 	<xsl:template name="generation-info-comment-block">
 		<xsl:text/>
 		<xsl:comment>
-		FIXML Schema <xsl:value-of select="/fixr:repository/@name"/> Version <xsl:value-of select="/fixr:repository/@version"/>
+		FIXML Schema Version <xsl:value-of select="/fixr:repository/@name"/> <xsl:value-of select="/fixr:repository/substring-after(@version,'_')"/>
 
 		Generated: <xsl:value-of select="current-dateTime()"/>
 
 		Copyright(c) FIX Protocol Limited. All rights reserved.
 
-        Comments and errors should be posted on the FIX protocol web-site https://www.fixtrading.org/
+        Comments and errors should be posted on the FIX Protocol web-site https://www.fixtrading.org/
 </xsl:comment>
 	<xsl:text>
 
@@ -185,7 +185,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xso:attributeGroup ref="BatchAttributes"/>
 		</xso:complexType>
 		<!-- FIXML Root Element Declaration -->
-		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
+		<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,'.')"/>
 		<xsl:variable name="schemaDate" select="/fixr:repository/fixr:metadata/dc:date"/>
 		<xso:attributeGroup name="FixmlAttributes">
 			<xso:attribute name="v" type="Version_t" fixed="{$VersionString}"/>
@@ -223,7 +223,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:param name="CategoryID"/>
 		<xsl:param name="CategoryAbbrName"/>
 		<xsl:param name="EnumDatatype"/>
-		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
+		<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,'.')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
 		<xso:appinfo>
@@ -313,7 +313,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					</xsl:if>
 				</xsl:for-each>
 			</xso:attributeGroup>
-			<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
+			<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,'.')"/>
 			<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 			<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
 			<!-- Complex Type that implements message-->
@@ -659,7 +659,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 	<!-- generates an appinfo element with Code Set defined in the FIXML Schema Metadata file -->
 	<xsl:template name="AppinfoEnumsDocBuilder">
 		<xsl:param name="CODES"/>
-		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
+		<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,'.')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
 		<!-- Add enums appinfo section -->
