@@ -2,15 +2,15 @@
 <!--********************************************************
 *
 *   Generates FIXML Schema from an Orchestra / Repository 2016 file
-*	                
+*
 ********************************************************-->
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xso="http://www.w3.org/1999/XSL/TransformAlias" xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xso="http://www.w3.org/1999/XSL/TransformAlias" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:localfn="http://dummy" exclude-result-prefixes="xs localfn"
 xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/dc/elements/1.1/">
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>
 	<xsl:param name="targetDir"/>
 	<xsl:namespace-alias stylesheet-prefix="xso" result-prefix="xs"/>
-	
+
 	<xsl:function name="localfn:cleanUrl">
 		<xsl:param name="url"/>
 		<xsl:value-of select="concat('file:///',translate($url,'\','/'))"/>
@@ -18,7 +18,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 	<xsl:template name="generation-info-comment-block">
 		<xsl:text/>
 		<xsl:comment>
-		FIXML Schema <xsl:value-of select="/fixr:repository/@name"/> Version <xsl:value-of select="/fixr:repository/@version"/>	
+		FIXML Schema <xsl:value-of select="/fixr:repository/@name"/> Version <xsl:value-of select="/fixr:repository/@version"/>
 
 		Generated: <xsl:value-of select="current-dateTime()"/>
 
@@ -28,13 +28,13 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 </xsl:comment>
 	<xsl:text>
 
-</xsl:text> 
+</xsl:text>
 	</xsl:template>
 	<xsl:template name="fixml-namespace">
 		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
-		
+
 		<xsl:namespace name="xs">http://www.w3.org/2001/XMLSchema</xsl:namespace>
 		<xsl:namespace name="">
 			<xsl:value-of select="$schemaNamespace"/>
@@ -101,7 +101,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 			<xsl:when test="$TYPE = 'field' or $TYPE = 'fieldRef'">true</xsl:when>
 			<xsl:otherwise>false</xsl:otherwise>
 		</xsl:choose>
-	</xsl:function>	
+	</xsl:function>
 	<xsl:template name="fixml-components-root">
 		<xso:simpleType name="Version_t">
 			<xso:restriction base="xs:string">
@@ -148,7 +148,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xso:group name="BatchHeaderElements">
 			<xso:sequence/>
 		</xso:group>
-		<xso:attributeGroup name="BatchHeaderAttributes"/>			
+		<xso:attributeGroup name="BatchHeaderAttributes"/>
 		<xso:complexType name="BatchHeader_t">
 			<xso:complexContent>
 				<xso:extension base="BaseHeader_t">
@@ -176,7 +176,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xso:attributeGroup name="BatchAttributes">
 	        <xso:attribute name="ID" type="BatchID_t" use="optional"/>
 	        <xso:attribute name="TotMsg" type="BatchTotalMessages_t" use="optional"/>
-	        <xso:attribute name="ProcMode" type="BatchProcessMode_enum_t" use="optional"/>		
+	        <xso:attribute name="ProcMode" type="BatchProcessMode_enum_t" use="optional"/>
 		</xso:attributeGroup>
 		<xso:complexType name="Batch_t">
 			<xso:sequence>
@@ -392,7 +392,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 				<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=current()/@id]"/>
 				<xsl:choose>
 					<xsl:when test="localfn:isInlinedComponent($component)">
-					
+
 						<xsl:comment>Start of inlined elements from component: <xsl:value-of select="$component/@name"/>
 						</xsl:comment>
 						<xso:group ref="{localfn:fixupCompName($component)}Elements"/>
@@ -455,7 +455,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 					</xsl:otherwise>
 				</xsl:choose>
 		</xso:attribute>
-		</xsl:if>	
+		</xsl:if>
 	</xsl:template>
 	<xsl:template name="SelectAttributes">
 		<xsl:param name="ComponentType"/>
@@ -478,7 +478,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 			<xsl:when test="localfn:isComponent(.)">
 					<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=$TagID]"/>
 					<xsl:if test="localfn:isInlinedComponent($component)">
-					
+
 						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/>
 						</xsl:comment>
 						<xso:attributeGroup ref="{localfn:fixupCompName($component)}Attributes"/>
@@ -548,7 +548,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 				<xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
+
 		<!-- create Field Type name - either _t or *_enum_t -->
 		<xsl:variable name="TYPE_NAME">
 			<xsl:value-of select="@name"/>
@@ -699,10 +699,11 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 	</xsl:template>
 	<xsl:template match="fixr:repository">
 		<xsl:variable name="VersionString" select="@name"/>
-		<xsl:variable name="FileSuffix" select="concat('-',$VersionString,'.xsd')"/>
+		<!-- <xsl:variable name="FileSuffix" select="concat('-',$VersionString,'.xsd')"/> -->
+		<xsl:variable name="FileSuffix" select="concat('-','Latest','.xsd')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
-	
+
 		<!-- generate the metadata schema file -->
 		<xsl:result-document href="{localfn:cleanUrl(concat($targetDir,'/','fixml-metadata',$FileSuffix))}">
 			<xsl:call-template name="generation-info-comment-block"/>
