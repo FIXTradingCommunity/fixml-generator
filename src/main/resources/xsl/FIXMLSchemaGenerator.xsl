@@ -18,7 +18,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 	<xsl:template name="generation-info-comment-block">
 		<xsl:text/>
 		<xsl:comment>
-		FIXML Schema Version <xsl:value-of select="/fixr:repository/@name"/> <xsl:value-of select="/fixr:repository/substring-after(@version,'_')"/>
+		FIXML Schema Version <xsl:value-of select="/fixr:repository/@name"/> <xsl:value-of select="concat(' ',/fixr:repository/substring-after(@version,'_'))"/>
 
 		Generated: <xsl:value-of select="current-dateTime()"/>
 
