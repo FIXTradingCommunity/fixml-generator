@@ -10,7 +10,7 @@ Generates FIXML schemas from an Orchestra file.
 ### Input
 
 An Orchestra file that conforms to the XML schema of Orchestra version 1.0 RC4. 
-See GitHub project fix-orchestra module repository2016 for the schema.
+See GitHub project fix-orchestra module repository (https://github.com/FIXTradingCommunity/fix-orchestra/blob/master/repository/src/main/resources/xsd/repository.xsd) for the schema.
 #### Parameter
 `targetDir` give a path to write output files
 
