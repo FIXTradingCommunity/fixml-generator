@@ -761,7 +761,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:call-template name="generation-info-comment-block"/>
 				<xso:schema>
 					<xsl:call-template name="fixml-namespace"/>
-					<xsl:variable name="SectionID" select="@id"/>
+					<xsl:variable name="SectionID" select="@name"/>
 					<xsl:for-each select="/fixr:repository/fixr:categories/fixr:category[@section = $SectionID]">
 						<xso:include>
 							<xsl:attribute name="schemaLocation"><xsl:value-of select="concat('fixml-',@FIXMLFileName,'-impl',$FileSuffix)"/></xsl:attribute>
@@ -771,14 +771,14 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			</xsl:result-document>
 		</xsl:for-each>
 		<!-- generate message category base files -->
-		<xsl:for-each select="/fixr:repository/fixr:categories/fixr:category[@componentType='Message' and not(@id = 'Session')]">
+		<xsl:for-each select="/fixr:repository/fixr:categories/fixr:category[@componentType='Message' and not(@name = 'Session')]">
 			<xsl:variable name="fn">
 				<xsl:value-of select="@FIXMLFileName"/>
 			</xsl:variable>
 			<xsl:result-document href="{localfn:cleanUrl(concat($targetDir,'/','fixml-',$fn,'-base',$FileSuffix))}">
 				<xsl:variable name="FileName">
 					<xsl:choose>
-						<xsl:when test="@id = 'Common'">fields-impl</xsl:when>
+						<xsl:when test="@name = 'Common'">fields-impl</xsl:when>
 						<xsl:otherwise>components-impl</xsl:otherwise>
 					</xsl:choose>
 				</xsl:variable>
@@ -788,20 +788,20 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xso:include>
 						<xsl:attribute name="schemaLocation"><xsl:value-of select="concat('fixml-',$FileName,$FileSuffix)"/></xsl:attribute>
 					</xso:include>
-					<xsl:if test="@id = 'Common'">
+					<xsl:if test="@name = 'Common'">
 						<xsl:call-template name="fixml-components-root"/>
 					</xsl:if>
 					<xsl:call-template name="MessageTemplate">
-						<xsl:with-param name="MessageCategory" select="@id"/>
+						<xsl:with-param name="MessageCategory" select="@name"/>
 					</xsl:call-template>
 					<xsl:call-template name="ComponentTemplate">
-						<xsl:with-param name="MessageCategory" select="@id"/>
+						<xsl:with-param name="MessageCategory" select="@name"/>
 					</xsl:call-template>
 				</xso:schema>
 			</xsl:result-document>
 		</xsl:for-each>
 		<!-- generate message category impl files -->
-		<xsl:for-each select="/fixr:repository/fixr:categories/fixr:category[@componentType='Message' and not(@id = 'Session')]/@FIXMLFileName">
+		<xsl:for-each select="/fixr:repository/fixr:categories/fixr:category[@componentType='Message' and not(@name = 'Session')]/@FIXMLFileName">
 			<xsl:result-document href="{localfn:cleanUrl(concat($targetDir,'/','fixml-',.,'-impl',$FileSuffix))}">
 				<xsl:call-template name="generation-info-comment-block"/>
 				<xso:schema>
