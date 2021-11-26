@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--********************************************************
+<!--*******************************************************************
 *
-*   Generates FIXML Schema from an Orchestra / Repository 2016 file
+*   Generates FIXML Schema files from an Orchestra Version 1.0 XML file
 *
-********************************************************-->
+***********************************************************************-->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xso="http://www.w3.org/1999/XSL/TransformAlias" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:localfn="http://dummy" exclude-result-prefixes="xs localfn"
 xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -750,13 +750,13 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xso:schema>
 				<xsl:call-template name="fixml-namespace"/>
 				<!-- get a list of the sections pretrade,trade,posttrade,infrastructure, etc.)-->
-				<xsl:for-each select="/fixr:repository/fixr:sections/fixr:section/@FIXMLFileName">
+				<xsl:for-each select="/fixr:repository/fixr:sections/fixr:section[not(@name = 'Session')]/@FIXMLFileName">
 					<xso:include schemaLocation="{concat('fixml-',.,$FileSuffix)}"/>
 				</xsl:for-each>
 			</xso:schema>
 		</xsl:result-document>
 		<!-- generate section files that contain includes for the categories -->
-		<xsl:for-each select="/fixr:repository/fixr:sections/fixr:section">
+		<xsl:for-each select="/fixr:repository/fixr:sections/fixr:section[not(@name = 'Session')]">
 			<xsl:result-document href="{localfn:cleanUrl(concat($targetDir,'/','fixml-',@FIXMLFileName,$FileSuffix))}">
 				<xsl:call-template name="generation-info-comment-block"/>
 				<xso:schema>
