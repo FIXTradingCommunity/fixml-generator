@@ -279,6 +279,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 						<xsl:when test="localfn:isGroup(current())">
 							<xsl:variable name="group" select="/fixr:repository/fixr:groups/fixr:group[@id=current()/@id]"/>
 							<xso:element name="{$group/@abbrName}" type="{localfn:generateCompType($group)}">
+								<xsl:if test="not($group/@presence = 'required')">
+									<xsl:attribute name="minOccurs">0</xsl:attribute>
+								</xsl:if>
 								<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
 							</xso:element>
 						</xsl:when>
