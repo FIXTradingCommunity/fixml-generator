@@ -106,14 +106,16 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xso:simpleType name="Version_t">
 			<xso:restriction base="xs:string">
 				<!-- XXX: Not a hack we chose to validate FIX.5.0SP versions -->
-				<xso:pattern value="(FIX.2.7)|(FIX.3.0)|(FIX\.4\.[0-4])|(FIX\.5\.0(SP[1-2]))|(FIXT.1.[1-2])"/>
+				<xso:pattern value="([A-Z]|[a-z])([0-9]|[A-Z]|[a-z]|_)*"/>
 			</xso:restriction>
 		</xso:simpleType>
 		<!-- Special case, generate required session component definitions -->
-		<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[@category='Session']|/fixr:repository/fixr:components/fixr:group[@category='Session']">
+		<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[@category='Session']|/fixr:repository/fixr:groups/fixr:group[@category='Session']">
 			<xsl:call-template name="GenerateElementSequence"/>
 			<xsl:variable name="ComponentType">
 				<xsl:choose>
+					<!-- XXX: path current()/fixr:fieldRef... in next line seems invalid -->
+					<!-- current() is either a component or group but fieldRef is part of a message structure -->
 					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
 					<xsl:when test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'">BlockRepeating</xsl:when>
 					<xsl:otherwise>Block</xsl:otherwise>
@@ -272,7 +274,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 							<xsl:if test="$component/@name != 'StandardHeader' and $component/@name != 'StandardTrailer'">
 								<xso:element name="{$component/@abbrName}" type="{localfn:generateCompType($component)}">
 									<xsl:if test="not($componentRef/@presence = 'required')">
-										<xsl:attribute name="minOccurs">0comp</xsl:attribute>
+										<xsl:attribute name="minOccurs">0</xsl:attribute>
 									</xsl:if>
 								</xso:element>
 							</xsl:if>
@@ -282,7 +284,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 							<xsl:variable name="groupRef" select="/fixr:repository/fixr:messages/fixr:message[@id=$MessID]/fixr:structure/fixr:groupRef[@id=$group]"/>
 							<xso:element name="{$group/@abbrName}" type="{localfn:generateCompType($group)}">
 								<xsl:if test="not($groupRef/@presence = 'required')">
-									<xsl:attribute name="minOccurs">0grp</xsl:attribute>
+									<xsl:attribute name="minOccurs $groupRef">0</xsl:attribute>
 								</xsl:if>
 								<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
 							</xso:element>
