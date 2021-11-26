@@ -321,8 +321,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:variable name="sid" select="/fixr:repository/fixr:categories/fixr:category[@name=$MessageCategory]/@section"/>
 				<xso:annotation>
 					<xso:documentation xml:lang="en">
-						<xsl:value-of select="@name"/> can be found at https://fiximate.fixtrading.org/en/FIX.Latest/msg
-						<xsl:value-of select="@id"/> .html
+						<xsl:value-of select="@name"/> can be found at https://www.fixtrading.org/online-specification/business-area-<xsl:value-of select="$sid"/>/msg<xsl:value-of select="@id"/>.html
 					</xso:documentation>
 					<xso:appinfo>
 						<xsl:element name="fm:Xref" namespace="{$fmNamespace}">
