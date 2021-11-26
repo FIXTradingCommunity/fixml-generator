@@ -318,7 +318,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
 			<!-- Complex Type that implements message-->
 			<xso:complexType name="{@name}_message_t" final="#all">
-				<xsl:variable name="sid" select="/fixr:repository/fixr:categories/fixr:category[@id=$MessageCategory]/@section"/>
+				<xsl:variable name="sid" select="/fixr:repository/fixr:categories/fixr:category[@name=$MessageCategory]/@section"/>
 				<xso:annotation>
 					<xso:documentation xml:lang="en">
 						<xsl:value-of select="@name"/> can be found in Volume <xsl:value-of select="/fixr:repository/fixr:sections/fixr:section[@id=$sid]/@volume"/> of the
