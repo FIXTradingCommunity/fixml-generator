@@ -272,7 +272,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 							<xsl:if test="$component/@name != 'StandardHeader' and $component/@name != 'StandardTrailer'">
 								<xso:element name="{$component/@abbrName}" type="{localfn:generateCompType($component)}">
 									<xsl:if test="not($componentRef/@presence = 'required')">
-										<xsl:attribute name="minOccurs">0</xsl:attribute>
+										<xsl:attribute name="minOccurs">0comp</xsl:attribute>
 									</xsl:if>
 								</xso:element>
 							</xsl:if>
@@ -282,7 +282,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 							<xsl:variable name="groupRef" select="/fixr:repository/fixr:messages/fixr:message[@id=$MessID]/fixr:structure/fixr:groupRef[@id=$group]"/>
 							<xso:element name="{$group/@abbrName}" type="{localfn:generateCompType($group)}">
 								<xsl:if test="not($groupRef/@presence = 'required')">
-									<xsl:attribute name="minOccurs">0</xsl:attribute>
+									<xsl:attribute name="minOccurs">0grp</xsl:attribute>
 								</xsl:if>
 								<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
 							</xso:element>
