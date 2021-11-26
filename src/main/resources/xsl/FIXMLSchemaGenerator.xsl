@@ -383,11 +383,12 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xso:element name="{$component/@abbrName}" type="{localfn:generateCompType($component)}">
 				<xsl:choose>
 					<xsl:when test="local-name($component) = 'group' or local-name($component) = 'groupRef'">
-						<xsl:attribute name="minOccurs">0</xsl:attribute>
+						<!-- XXX:Why is minOccurs created twice, first unconditional and then conditional based on presence attribute? -->
+						<xsl:attribute name="minOccurs">0X</xsl:attribute>
 						<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
 					</xsl:when>
 					<xsl:when test="not($presence = 'required')">
-						<xsl:attribute name="minOccurs">0</xsl:attribute>
+						<xsl:attribute name="minOccurs">0Y</xsl:attribute>
 					</xsl:when>
 				</xsl:choose>
 			</xso:element>
