@@ -82,6 +82,10 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:param name="node"/>
 		<xsl:variable name="TYPE" select="local-name($node)"/>
 		<xsl:choose>
+			<!-- XXX: Attribute "rendering" exists in Basic. Unified has "inlined".
+								Orchestra has "rendering" but unified2orchestra does not seem to create it.
+								See unified2orchestra issue #8
+			-->
 			<xsl:when test="$TYPE='component' and contains($node/@rendering, 'fixml=Inlined')">true</xsl:when>
 			<xsl:otherwise>false</xsl:otherwise>
 		</xsl:choose>
@@ -105,7 +109,6 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 	<xsl:template name="fixml-components-root">
 		<xso:simpleType name="Version_t">
 			<xso:restriction base="xs:string">
-				<!-- XXX: Not a hack we chose to validate FIX.5.0SP versions -->
 				<xso:pattern value="([A-Z]|[a-z])([0-9]|[A-Z]|[a-z]|_)*"/>
 			</xso:restriction>
 		</xso:simpleType>
@@ -114,8 +117,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:call-template name="GenerateElementSequence"/>
 			<xsl:variable name="ComponentType">
 				<xsl:choose>
-					<!-- XXX: path current()/fixr:fieldRef... in next line seems invalid -->
-					<!-- current() is either a component or group but fieldRef is part of a message structure -->
+					<!-- First test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
+					<!-- Second test identifies repeating groups, otherwise it can only be a simple component. -->
 					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
 					<xsl:when test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'">BlockRepeating</xsl:when>
 					<xsl:otherwise>Block</xsl:otherwise>
@@ -359,6 +362,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:sort select="@id"/>
 			<xsl:variable name="ComponentType">
 				<xsl:choose>
+					<!-- First test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
+					<!-- Second test identifies repeating groups, otherwise it can only be a simple component. -->
 					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
 					<xsl:when test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'">BlockRepeating</xsl:when>
 					<xsl:otherwise>Block</xsl:otherwise>
