@@ -113,8 +113,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			</xso:restriction>
 		</xso:simpleType>
 		<!-- Special case, generate required session component definitions -->
+		<!-- XXX: Section seems obsolete since session files are not to be generated -->
 		<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[@category='Session']|/fixr:repository/fixr:groups/fixr:group[@category='Session']">
-			<xsl:call-template name="GenerateElementSequence"/>
 			<xsl:variable name="ComponentType">
 				<xsl:choose>
 					<!-- First test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
@@ -124,6 +124,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:otherwise>Block</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
+			<xsl:call-template name="GenerateElementSequence">
+				<xsl:with-param name="ComponentType" select="$ComponentType"/>
+			</xsl:call-template>
 			<xsl:choose>
 				<xsl:when test="Name='StandardHeader'">
 					<xsl:call-template name="GenerateAttributeGroup">
@@ -381,19 +384,27 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			</xsl:call-template>
 		</xsl:for-each>
 	</xsl:template>
-	<!-- Generates the element statement for a component reference within an element sequence -->
+	<!-- Generates the element statement for a component reference within an element sequence -->Hanno
 	<xsl:template name="GenerateAnElement">
 		<xsl:param name="component"/>
 		<xsl:param name="presence"/>
-			<xso:element name="{$component/@abbrName}" type="{localfn:generateCompType($component)}">
+			<xsl:variable name="ComponentType">
 				<xsl:choose>
-					<xsl:when test="local-name($component) = 'group' or local-name($component) = 'groupRef'">
-						<!-- XXX:Why is minOccurs created unconditionally for groups? -->
-						<xsl:attribute name="minOccurs">0</xsl:attribute>
-						<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
+					<!-- First test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
+					<!-- Second test identifies repeating groups, otherwise it can only be a simple component. -->
+					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
+					<xsl:when test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'">BlockRepeating</xsl:when>
+					<xsl:otherwise>Block</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
+			<xso:element name="{$component/@abbrName}" type="{localfn:generateCompType($component)}">
+				<xsl:attribute name="minOccurs" select="$presence = 'required'"/>
+				<xsl:choose>
+					<xsl:when test="$ComponentType='Block' or $ComponentType='XMLDataBlock'">
+						<xsl:attribute name="maxOccurs">1</xsl:attribute>
 					</xsl:when>
-					<xsl:when test="not($presence = 'required')">
-						<xsl:attribute name="minOccurs">0</xsl:attribute>
+					<xsl:when test="$ComponentType='BlockRepeating'">
+						<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
 					</xsl:when>
 				</xsl:choose>
 			</xso:element>
