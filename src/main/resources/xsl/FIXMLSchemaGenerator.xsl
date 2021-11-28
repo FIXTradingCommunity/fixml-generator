@@ -397,16 +397,14 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:otherwise>Block</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
+			<!-- Only set minOccurs and maxOccurs when different from the default value 1 -->
 			<xso:element name="{$component/@abbrName}" type="{localfn:generateCompType($component)}">
-				<xsl:attribute name="minOccurs" select="$presence = 'required'"/>
-				<xsl:choose>
-					<xsl:when test="$ComponentType='Block' or $ComponentType='XMLDataBlock'">
-						<xsl:attribute name="maxOccurs">1</xsl:attribute>
-					</xsl:when>
-					<xsl:when test="$ComponentType='BlockRepeating'">
-						<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
-					</xsl:when>
-				</xsl:choose>
+				<xsl:if test="not($presence = 'required')">
+					<xsl:attribute name="minOccurs">0</xsl:attribute>
+				</xsl:if>
+				<xsl:if test="$ComponentType='BlockRepeating'">
+					<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
+				</xsl:if>
 			</xso:element>
 	</xsl:template>
 	<xsl:template name="SelectElements">
