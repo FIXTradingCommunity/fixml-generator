@@ -388,21 +388,12 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 	<xsl:template name="GenerateAnElement">
 		<xsl:param name="component"/>
 		<xsl:param name="presence"/>
-			<xsl:variable name="ComponentType">
-				<xsl:choose>
-					<!-- First test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
-					<!-- Second test identifies repeating groups, otherwise it can only be a simple component. -->
-					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
-					<xsl:when test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'">BlockRepeating</xsl:when>
-					<xsl:otherwise>Block</xsl:otherwise>
-				</xsl:choose>
-			</xsl:variable>
 			<!-- Only set minOccurs and maxOccurs when different from the default value 1 -->
 			<xso:element name="{$component/@abbrName}" type="{localfn:generateCompType($component)}">
 				<xsl:if test="not($presence = 'required')">
 					<xsl:attribute name="minOccurs">0</xsl:attribute>
 				</xsl:if>
-				<xsl:if test="$ComponentType='BlockRepeating'">
+				<xsl:if test="local-name(current()) = 'group'">
 					<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
 				</xsl:if>
 			</xso:element>
