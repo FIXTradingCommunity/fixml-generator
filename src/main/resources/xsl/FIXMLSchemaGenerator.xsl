@@ -270,7 +270,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:choose>
 						<xsl:when test="localfn:isComponent(current())">
 							<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=current()/@id]"/>
-							<xsl:variable name="componentRef" select="/fixr:repository/fixr:messages/fixr:message[@id=$MessID]/fixr:structure/fixr:componentRef[@id=$component]"/>
+							<xsl:variable name="componentRef" select="/fixr:repository/fixr:messages/fixr:message[@id=$MessID]/fixr:structure/fixr:componentRef[@id=$component/@id]"/>
 							<xsl:if test="$component/@name != 'StandardHeader' and $component/@name != 'StandardTrailer'">
 								<xso:element name="{$component/@abbrName}" type="{localfn:generateCompType($component)}">
 									<xsl:if test="not($componentRef/@presence = 'required')">
@@ -281,7 +281,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 						</xsl:when>
 						<xsl:when test="localfn:isGroup(current())">
 							<xsl:variable name="group" select="/fixr:repository/fixr:groups/fixr:group[@id=current()/@id]"/>
-							<xsl:variable name="groupRef" select="/fixr:repository/fixr:messages/fixr:message[@id=$MessID]/fixr:structure/fixr:groupRef[@id=$group]"/>
+							<xsl:variable name="groupRef" select="/fixr:repository/fixr:messages/fixr:message[@id=$MessID]/fixr:structure/fixr:groupRef[@id=$group/@id]"/>
 							<xso:element name="{$group/@abbrName}" type="{localfn:generateCompType($group)}">
 								<xsl:if test="not($groupRef/@presence = 'required')">
 									<xsl:attribute name="minOccurs">0</xsl:attribute>
