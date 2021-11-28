@@ -384,7 +384,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			</xsl:call-template>
 		</xsl:for-each>
 	</xsl:template>
-	<!-- Generates the element statement for a component reference within an element sequence -->Hanno
+	<!-- Generates the element statement for a component reference within an element sequence -->
 	<xsl:template name="GenerateAnElement">
 		<xsl:param name="component"/>
 		<xsl:param name="presence"/>
