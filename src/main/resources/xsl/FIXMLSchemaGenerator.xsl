@@ -393,7 +393,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:if test="not($presence = 'required')">
 					<xsl:attribute name="minOccurs">0</xsl:attribute>
 				</xsl:if>
-				<xsl:if test="local-name(current()) = 'group'">
+				<xsl:if test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'">
 					<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
 				</xsl:if>
 			</xso:element>
