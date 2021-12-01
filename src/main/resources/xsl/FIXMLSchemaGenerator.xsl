@@ -885,7 +885,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xso:schema>
 				<xsl:call-template name="fixml-namespace"/>
 				<xsl:for-each select="/fixr:repository/fixr:datatypes/fixr:datatype">
-					<xsl:if test="child::fixr:mappedDatatype[@standard='XML']">
+					<!-- Only use mapped datatype if it is not already a base XML datatype. -->
+					<xsl:if test="child::fixr:mappedDatatype[@standard='XML' and @builtin='0']">
 						<xso:simpleType>
 							<xsl:attribute name="name" select="@name"/>
 							<xso:annotation>
