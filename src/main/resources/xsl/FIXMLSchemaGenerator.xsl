@@ -838,7 +838,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xso:include>
 					<xsl:attribute name="schemaLocation" select="concat('fixml-datatypes',$FileSuffix)"/>
 				</xso:include>
-				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup')]">
+				<!-- Special handling of fields for XML definitions of securities required as only the XML schema fields are needed in FIXML -->
+				<!-- Currently 8 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len) -->
+				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup' or ends-with($field/@name,'SecurityXML') or ends-with($field/@name,'SecurityXMLLen'))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:call-template name="simpleTypeBuilder"/>
 				</xsl:for-each>
