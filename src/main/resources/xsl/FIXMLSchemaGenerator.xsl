@@ -302,6 +302,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<!-- Required Attributes-->
 			<xso:attributeGroup name="{@name}Attributes">
 				<xsl:for-each select="/fixr:repository/fixr:messages/fixr:message[@id = $MessID]/fixr:structure/child::*">
+					<!-- No special handling of fields for XML definitions of securities needed here as they are never on the meesage root level -->
 					<xsl:if test="localfn:isField(current())">
 						<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=current()/@id]"/>
 						<xso:attribute>
@@ -446,7 +447,10 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:param name="MsgCategory"/>
 		<xsl:param name="Presence"/>
 		<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
-		<xsl:if test="not($field/@type = 'data' or $field/@type = 'Length' or $field/@type = 'XMLData')">
+		<!-- Special handling of fields for XML definitions of securities required as only the XML schema fields are needed in FIXML -->
+		<!-- Currently 8 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len) -->
+		<!-- Fields cannot be excluded based on type (data/Length/XMLData) as this would also exclude all EncodedXXX(Len) fields -->
+		<xsl:if test="not(ends-with($field/@name,'SecurityXML') or ends-with()$field/@type,'SecurityXMLLen')">
 			<xso:attribute>
 				<xsl:choose>
 					<xsl:when test="$field/@baseCategory=$MsgCategory">
@@ -596,8 +600,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:variable name="DATATYPE" select="/fixr:repository/fixr:datatypes/fixr:datatype[@name=$TYPE]"/>
 			<xsl:variable name="OUTPUT_TYPE">
 				<xsl:choose>
-					<xsl:when test="$DATATYPE/fixr:mappedDatatype[@standard='XML']">
-						<xsl:value-of select="$DATATYPE/fixr:mappedDatatype[@standard='XML']/@base"/>
+					<!-- Only use mapped datatype if it is not already a base XML datatype. -->
+					<xsl:when test="$DATATYPE/fixr:mappedDatatype[@standard='XML' and @builtin='0']">
+						<xsl:value-of select="$DATATYPE/fixr:mappedDatatype[@standard='XML' and @builtin='0']/@base"/>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:value-of select="$TYPE"/>
