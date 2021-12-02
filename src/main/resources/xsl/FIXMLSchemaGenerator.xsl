@@ -495,7 +495,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:when test="localfn:isComponent(.)">
 					<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=$TagID]"/>
 					<!-- <xsl:if test="localfn:isInlinedComponent($component)"> -->
-					<xsl:if test="$component/@name=('InstrumentLeg','UnderlyingInstrument','InstrumentScope'))">
+					<xsl:if test="$component/@name=('InstrumentLeg','UnderlyingInstrument','InstrumentScope')">
 
 						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/>
 						</xsl:comment>
