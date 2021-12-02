@@ -494,10 +494,11 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			</xsl:when>
 			<xsl:when test="localfn:isComponent(.)">
 					<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=$TagID]"/>
-					<!-- Find out if the surrounding element of the component is a repeating group with the same abbreviated name and only inline in that case -->
 					<xsl:variable name="group" select="/fixr:repository/fixr:groups/fixr:group[@id=$MessID]"/>
+					<!-- Find out if the surrounding element of the component is a repeating group with the same abbreviated name and only inline in that case -->
+					<!-- Exceptions: RiskInstrumentScopeGrp and QuotReqLegsGrp -->
 					<!-- <xsl:if test="localfn:isInlinedComponent($component)"> -->
-					<xsl:if test="$group/@abbrName=$component/@abbrName">
+					<xsl:if test="$group/@abbrName=$component/@abbrName and not($group/@name=('RiskInstrumentScopeGrp','QuotReqLegsGrp'))">
 
 						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',$group/@name,'(',$MessID,')')"/>
 						</xsl:comment>
