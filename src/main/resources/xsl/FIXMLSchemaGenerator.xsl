@@ -505,7 +505,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<!-- <xsl:if test="localfn:isInlinedComponent($component)"> -->
 					<xsl:if test="$inlined">
 
-						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select=" in $group/@name $MessID"/>
+						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',$group/@name,'(',$MessID,')')"/>
 						</xsl:comment>
 						<xso:attributeGroup ref="{localfn:fixupCompName($component)}Attributes"/>
 						<xsl:comment>End of inlined attributes from component: <xsl:value-of select="$component/@name"/>
