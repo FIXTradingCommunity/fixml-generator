@@ -480,7 +480,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:param name="MessID"/>
 		<xsl:param name="MsgCategory"/>
 		<xsl:for-each select="child::*">
-		<xsl:variable name="TagID" select="@id"/>
+		  <xsl:variable name="TagID" select="@id"/>
 			<xsl:choose>
 				<xsl:when test="localfn:isField(.)">
 				<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
@@ -497,7 +497,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<!-- <xsl:if test="localfn:isInlinedComponent($component)"> -->
 					<xsl:if test="$component/@name=('InstrumentLeg','UnderlyingInstrument','InstrumentScope')">
 
-						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/>
+						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="$MessID"/> <xsl:value-of select="$MsgCategory"/>
 						</xsl:comment>
 						<xso:attributeGroup ref="{localfn:fixupCompName($component)}Attributes"/>
 						<xsl:comment>End of inlined attributes from component: <xsl:value-of select="$component/@name"/>
