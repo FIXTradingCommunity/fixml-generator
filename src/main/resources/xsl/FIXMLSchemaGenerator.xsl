@@ -494,10 +494,18 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			</xsl:when>
 			<xsl:when test="localfn:isComponent(.)">
 					<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=$TagID]"/>
+					<!-- Find out if the surrounding element of the component is a repeating group with the same abbreviated name and only inline in that case -->
+					<xsl:variable name="group" select="/fixr:repository/fixr:groups/fixr:group[@id=$MessID]"/>
+					<xsl:variable name="inlined">
+						<xsl:choose>
+							<xsl:when test="$group/@abbrName=$component/@abbrName">true</xsl:when>
+							<xsl:otherwise>false</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
 					<!-- <xsl:if test="localfn:isInlinedComponent($component)"> -->
-					<xsl:if test="$component/@name=('InstrumentLeg','UnderlyingInstrument','InstrumentScope')">
+					<xsl:if test="$inlined">
 
-						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="$MessID"/> <xsl:value-of select="$MsgCategory"/>
+						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select=" in $group/@name $MessID"/>
 						</xsl:comment>
 						<xso:attributeGroup ref="{localfn:fixupCompName($component)}Attributes"/>
 						<xsl:comment>End of inlined attributes from component: <xsl:value-of select="$component/@name"/>
