@@ -404,6 +404,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:choose>
 			<xsl:when test="localfn:isComponent(.)">
 				<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=current()/@id]"/>
+				<!-- Context missing to determine whether component is embedded in a group withe the same abbreviated name. -->
+						<xsl:comment>Parent of current node: <xsl:value-of select="current()/parent::*"/>
+						</xsl:comment>
 				<xsl:choose>
 					<xsl:when test="localfn:isInlinedComponent($component)">
 
@@ -418,7 +421,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 							<xsl:with-param name="component" select="$component"/>
 							<xsl:with-param name="presence" select="current()/@presence"/>
 						</xsl:call-template>
-				</xsl:otherwise>
+					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:when>
 			<xsl:when test="localfn:isGroup(.)">
