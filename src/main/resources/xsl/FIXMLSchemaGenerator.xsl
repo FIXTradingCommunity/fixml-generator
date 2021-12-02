@@ -405,10 +405,11 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:when test="localfn:isComponent(.)">
 				<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=current()/@id]"/>
 				<!-- Context missing to determine whether component is embedded in a group withe the same abbreviated name. -->
-						<xsl:comment>Parent of <xsl:value-of select="current()/@id"/> : <xsl:value-of select="../@id"/>
+						<xsl:comment>Parent of <xsl:value-of select="concat(current()/@id,'current()/@abbrName')"/> : <xsl:value-of select="concat(../@id, ../@abbrName)"/>
 						</xsl:comment>
 				<xsl:choose>
-					<xsl:when test="localfn:isInlinedComponent($component)">
+					<xsl:when test="current()/@abbrName = ../@abbrName and not(../@name=('RiskInstrumentScopeGrp','QuotReqLegsGrp'))">
+					<!-- <xsl:when test="localfn:isInlinedComponent($component)"> -->
 
 						<xsl:comment>Start of inlined elements from component: <xsl:value-of select="$component/@name"/>
 						</xsl:comment>
