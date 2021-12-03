@@ -882,14 +882,14 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 								<xsl:when test="@unionDataType">
 									<xsl:call-template name="simple-type-union">
 										<xsl:with-param name="TypeName" select="@name"/>
-										<xsl:with-param name="EnumTypeName" select="@name"/>
+										<xsl:with-param name="EnumTypeName" select="@type"/>
 										<xsl:with-param name="UnionTypeName" select="@unionDataType"/>
 									</xsl:call-template>
 								</xsl:when>
 								<xsl:otherwise>
 									<xsl:call-template name="simple-type-restriction">
 										<xsl:with-param name="TypeName" select="@name"/>
-										<xsl:with-param name="EnumTypeName" select="@name"/>
+										<xsl:with-param name="EnumTypeName" select="@type"/>
 									</xsl:call-template>
 								</xsl:otherwise>
 							</xsl:choose>
