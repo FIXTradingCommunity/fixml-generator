@@ -109,7 +109,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 	<xsl:template name="fixml-components-root">
 		<xso:simpleType name="Version_t">
 			<xso:restriction base="xs:string">
-				<xso:pattern value="([A-Z]|[a-z])([0-9]|[A-Z]|[a-z]|_)*"/>
+				<xso:pattern value="(FIX.2.7)|(FIX.3.0)|(FIX\.4\.[0-4])|(FIX\.5\.0(SP[1-2]))|(FIXT.1.[1-2])"/>
 			</xso:restriction>
 		</xso:simpleType>
 		<!-- Special case, generate required session component definitions (exception: StandardTrailer)-->
