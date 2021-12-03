@@ -112,9 +112,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xso:pattern value="([A-Z]|[a-z])([0-9]|[A-Z]|[a-z]|_)*"/>
 			</xso:restriction>
 		</xso:simpleType>
-		<!-- Special case, generate required session component definitions -->
-		<!-- XXX: Section seems obsolete since session files are not to be generated -->
-		<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[@category='Session']|/fixr:repository/fixr:groups/fixr:group[@category='Session']">
+		<!-- Special case, generate required session component definitions (exception: StandardTrailer)-->
+		<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[@category='Session'and not(@name='StandardTrailer')]|/fixr:repository/fixr:groups/fixr:group[@category='Session']">
 			<xsl:variable name="ComponentType">
 				<xsl:choose>
 					<!-- First test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
@@ -128,7 +127,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:with-param name="ComponentType" select="$ComponentType"/>
 			</xsl:call-template>
 			<xsl:choose>
-				<xsl:when test="Name='StandardHeader'">
+				<xsl:when test="@name='StandardHeader'">
 					<xsl:call-template name="GenerateAttributeGroup">
 						<xsl:with-param name="ComponentType" select="$ComponentType"/>
 						<xsl:with-param name="MakeAllReferencesOptional" select="1"/>
@@ -362,7 +361,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 	</xsl:template>
 	<xsl:template name="ComponentTemplate">
 		<xsl:param name="MessageCategory"/>
-		<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[@category=$MessageCategory and not(@name='StandardTrailer')]|/fixr:repository/fixr:groups/fixr:group[@category=$MessageCategory]">
+		<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[@category=$MessageCategory]|/fixr:repository/fixr:groups/fixr:group[@category=$MessageCategory]">
 			<xsl:sort select="@id"/>
 			<xsl:variable name="ComponentType">
 				<xsl:choose>
