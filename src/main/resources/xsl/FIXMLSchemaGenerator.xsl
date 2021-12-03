@@ -415,7 +415,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:choose>
 					<!-- Components are inlined if their abbreviated name is identical to their parent's in the given context (exceptions explicitly excluded) -->
 					<!-- Example: InstrmtLegGrp contains InstrumentLeg -->
-					<xsl:when test="$component/@abbrName = ../@abbrName and not(../@name=('RiskInstrumentScopeGrp','QuotReqLegsGrp'))">
+					<xsl:when test="$component/@abbrName = ../@abbrName and not(../@name='QuotReqLegsGrp')">
 
 						<xsl:comment>Start of inlined elements from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',../@name)"/>
 						</xsl:comment>
@@ -506,7 +506,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=$TagID]"/>
 					<!-- Components are inlined if their abbreviated name is identical to their parent's in the given context (exceptions explicitly excluded) -->
 					<!-- Example: InstrmtLegGrp contains InstrumentLeg -->
-					<xsl:if test="$component/@abbrName = ../@abbrName and not(../@name=('RiskInstrumentScopeGrp','QuotReqLegsGrp'))">
+					<xsl:if test="$component/@abbrName = ../@abbrName and not(../@name='QuotReqLegsGrp')">
 
 						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',../@name)"/>
 						</xsl:comment>
