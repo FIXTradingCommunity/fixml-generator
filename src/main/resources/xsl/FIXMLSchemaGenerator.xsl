@@ -409,10 +409,10 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<!-- Example: InstrmtLegGrp contains InstrumentLeg -->
 					<xsl:when test="$component/@abbrName = ../@abbrName and not(../@name=('RiskInstrumentScopeGrp','QuotReqLegsGrp'))">
 
-						<xsl:comment>Start of inlined elements from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',$../@name)"/>
+						<xsl:comment>Start of inlined elements from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',../@name)"/>
 						</xsl:comment>
 						<xso:group ref="{localfn:fixupCompName($component)}Elements"/>
-						<xsl:comment>End of inlined elements from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',$../@name)"/>
+						<xsl:comment>End of inlined elements from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',../@name)"/>
 						</xsl:comment>
 					</xsl:when>
 					<xsl:otherwise>
@@ -500,10 +500,10 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<!-- Example: InstrmtLegGrp contains InstrumentLeg -->
 					<xsl:if test="$component/@abbrName = ../@abbrName and not(../@name=('RiskInstrumentScopeGrp','QuotReqLegsGrp'))">
 
-						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',$../@name)"/>
+						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',../@name)"/>
 						</xsl:comment>
 						<xso:attributeGroup ref="{localfn:fixupCompName($component)}Attributes"/>
-						<xsl:comment>End of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',$../@name)"/>
+						<xsl:comment>End of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',../@name)"/>
 						</xsl:comment>
 					</xsl:if>
 				</xsl:when>
