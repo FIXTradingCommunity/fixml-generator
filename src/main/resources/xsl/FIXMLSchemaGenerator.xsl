@@ -54,7 +54,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:choose>
 			<!-- XXX: HACK: Special case for legacy compatibility i.e. JimN design errors -->
 			<!-- xsl:when test="$component/Name='HopGrp'">Hop</xsl:when -->
-			<xsl:when test="$component/Name='StandardHeader'">BaseHeader</xsl:when>
+			<xsl:when test="$component/@name='StandardHeader'">BaseHeader</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$component/@name"/>
 			</xsl:otherwise>
@@ -362,7 +362,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 	</xsl:template>
 	<xsl:template name="ComponentTemplate">
 		<xsl:param name="MessageCategory"/>
-		<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[@category=$MessageCategory]|/fixr:repository/fixr:groups/fixr:group[@category=$MessageCategory]">
+		<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[@category=$MessageCategory and not(@name='StandardTrailer')]|/fixr:repository/fixr:groups/fixr:group[@category=$MessageCategory]">
 			<xsl:sort select="@id"/>
 			<xsl:variable name="ComponentType">
 				<xsl:choose>
