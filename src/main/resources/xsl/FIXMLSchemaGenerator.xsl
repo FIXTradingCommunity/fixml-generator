@@ -617,9 +617,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:variable name="DATATYPE" select="/fixr:repository/fixr:datatypes/fixr:datatype[@name=$TYPE]"/>
 			<xsl:variable name="OUTPUT_TYPE">
 				<xsl:choose>
-					<!-- Only use mapped datatype if it is not already a base XML datatype. -->
-					<xsl:when test="$DATATYPE/fixr:mappedDatatype[@standard='XML' and @builtin='0']">
-						<xsl:value-of select="$DATATYPE/fixr:mappedDatatype[@standard='XML' and @builtin='0']/@base"/>
+					<!-- Only use mapped datatype if the FIX datatype is a base XML datatype, e.g. int results in xs:integer. -->
+					<xsl:when test="$DATATYPE/fixr:mappedDatatype[@standard='XML' and @builtin='1']">
+						<xsl:value-of select="$DATATYPE/fixr:mappedDatatype[@standard='XML' and @builtin='1']/@base"/>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:value-of select="$TYPE"/>
