@@ -577,6 +577,11 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
+		<xsl:if test="$CODESET">
+			<xsl:comment>
+				<xsl:value-of select="@name"/>(<xsl:value-of select="$TAGNUM"/>) defined in
+				implementation file</xsl:comment>
+		</xsl:if>
 
 		<!-- create Field Type name - either _t or *_enum_t -->
 		<xsl:variable name="TYPE_NAME">
