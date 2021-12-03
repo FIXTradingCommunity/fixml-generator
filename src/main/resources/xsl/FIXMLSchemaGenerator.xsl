@@ -882,7 +882,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 								<xsl:when test="@unionDataType">
 									<xsl:call-template name="simple-type-union">
 										<xsl:with-param name="TypeName" select="@name"/>
-										<xsl:with-param name="EnumTypeName" select="@type"/>
+										<!-- Strip "CodeSet" from the enumeration type name to avoid change to FIXML schema generated from Basis repository -->
+										<xsl:with-param name="EnumTypeName" select="substring-before(@type,'CodeSet')"/>
 										<xsl:with-param name="UnionTypeName" select="@unionDataType"/>
 									</xsl:call-template>
 								</xsl:when>
