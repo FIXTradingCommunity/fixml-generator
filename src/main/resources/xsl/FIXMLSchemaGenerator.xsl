@@ -536,7 +536,14 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:param name="ComponentType"/>
 		<xsl:variable name="MsgElemID" select="@id"/>
 		<xso:complexType>
-			<xsl:attribute name="name"><xsl:value-of select="@name"/>_Block_t</xsl:attribute>
+		<xsl:choose>
+			<xsl:when test="$component/@name='StandardHeader'">
+				<xsl:attribute name="name">BaseHeader_t</xsl:attribute>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:attribute name="name"><xsl:value-of select="@name"/>_Block_t</xsl:attribute>
+			</xsl:otherwise>
+		</xsl:choose>
 			<xso:annotation>
 				<xsl:call-template name="appinfo-Xref-builder">
 					<xsl:with-param name="name" select="@name"/>
