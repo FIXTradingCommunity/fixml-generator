@@ -389,14 +389,23 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 	<xsl:template name="GenerateAnElement">
 		<xsl:param name="component"/>
 		<xsl:param name="presence"/>
-			<!-- Only set minOccurs and maxOccurs when different from the default value 1 -->
 			<xso:element name="{$component/@abbrName}" type="{localfn:generateCompType($component)}">
-				<xsl:if test="not($presence = 'required')">
+			<!-- Option 1: Only set minOccurs and maxOccurs when different from the default value 1 -->
+				<!-- <xsl:if test="not($presence = 'required')">
 					<xsl:attribute name="minOccurs">0</xsl:attribute>
 				</xsl:if>
 				<xsl:if test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'">
 					<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
-				</xsl:if>
+				</xsl:if> -->
+			<!-- Option 2: Explictly set minOccurs and maxOccurs regardless of default value -->
+			<xsl:choose>
+				<xsl:when test="not($presence = 'required'"><xsl:attribute name="minOccurs">0</xsl:attribute></xsl:when>
+				<xsl:otherwise><xsl:attribute name="minOccurs">1</xsl:attribute></xsl:otherwise>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'"><xsl:attribute name="maxOccurs">unbounded</xsl:attribute></xsl:when>
+				<xsl:otherwise><xsl:attribute name="maxOccurs">1</xsl:attribute></xsl:otherwise>
+			</xsl:choose>
 			</xso:element>
 	</xsl:template>
 	<xsl:template name="SelectElements">
