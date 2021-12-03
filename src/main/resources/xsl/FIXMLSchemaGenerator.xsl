@@ -704,7 +704,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:element name="fm:EnumDoc" namespace="{$fmNamespace}">
 					<xsl:attribute name="value" select="@value"/>
 					<!-- Name of the value (not the symbolic name) to be retrieved from its synopsis -->
-					<xsl:value-of select="./annotation/documentation[@purpose='SYNOPSIS']"/>
+					<xsl:value-of select="$CODES/code/annotation/documentation[@purpose='SYNOPSIS']"/>
 				</xsl:element>
 			</xsl:for-each>
 		</xso:appinfo>
