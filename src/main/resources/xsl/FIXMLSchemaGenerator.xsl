@@ -537,7 +537,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:variable name="MsgElemID" select="@id"/>
 		<xso:complexType>
 		<xsl:choose>
-			<xsl:when test="$component/@name='StandardHeader'">
+			<xsl:when test="@name='StandardHeader'">
 				<xsl:attribute name="name">BaseHeader_t</xsl:attribute>
 			</xsl:when>
 			<xsl:otherwise>
