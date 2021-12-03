@@ -399,7 +399,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				</xsl:if> -->
 			<!-- Option 2: Explictly set minOccurs and maxOccurs regardless of default value -->
 			<xsl:choose>
-				<xsl:when test="not($presence = 'required'"><xsl:attribute name="minOccurs">0</xsl:attribute></xsl:when>
+				<xsl:when test="not($presence = 'required')"><xsl:attribute name="minOccurs">0</xsl:attribute></xsl:when>
 				<xsl:otherwise><xsl:attribute name="minOccurs">1</xsl:attribute></xsl:otherwise>
 			</xsl:choose>
 			<xsl:choose>
