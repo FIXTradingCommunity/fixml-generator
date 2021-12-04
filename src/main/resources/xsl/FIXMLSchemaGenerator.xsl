@@ -497,6 +497,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
 				<xsl:variable name="TYPE" select="$field/@type"/>
 				<!-- Exclude standard header fields that are not applicable to FIXML or part of the FIXML root element -->
+				<xsl:comment>Field name: <xsl:value-of select="$field/@name"/>
+				</xsl:comment>
 				<xsl:if test="not($field/@name=('ApplExtID','BeginString','BodyLength','CstmApplVerID','LastMsgSeqNumProcessed','SecureData','SecureDataLen','XmlData','XmlDataLen'))">
 					<xsl:call-template name="GenerateAttribute">
 						<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
