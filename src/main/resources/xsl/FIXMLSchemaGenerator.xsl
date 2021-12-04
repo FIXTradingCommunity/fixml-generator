@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--*******************************************************************
+<!--************************************************************************
 *
-*   Generates FIXML Schema files from an Orchestra Version 1.0 XML file
+*   Generates FIXML V1.2 Schema files from an Orchestra Version 1.0 XML file
 *
-***********************************************************************-->
+****************************************************************************-->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xso="http://www.w3.org/1999/XSL/TransformAlias" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:localfn="http://dummy" exclude-result-prefixes="xs localfn"
 xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -192,7 +192,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xso:attributeGroup ref="BatchAttributes"/>
 		</xso:complexType>
 		<!-- FIXML Root Element Declaration -->
-		<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,'.')"/>
+		<xsl:variable name="VersionString" select="/fixr:repository/@name)"/>
 		<xsl:variable name="schemaDate" select="/fixr:repository/fixr:metadata/dc:date"/>
 		<xso:attributeGroup name="FixmlAttributes">
 			<xso:attribute name="v" type="Version_t" fixed="{$VersionString}"/>
@@ -495,12 +495,15 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:when test="localfn:isField(.)">
 				<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
 				<xsl:variable name="TYPE" select="$field/@type"/>
-				<xsl:call-template name="GenerateAttribute">
-					<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
-					<xsl:with-param name="TagID" select="$TagID"/>
-					<xsl:with-param name="MsgCategory" select="$MsgCategory"/>
-					<xsl:with-param name="Presence" select="@presence"/>
-				</xsl:call-template>
+				<!-- Exclude standard header fields that are not applicable to FIXML or part of the FIXML root element -->
+				<xsl:if test="not(@name=('ApplExtID','BeginString','BodyLength','CstmApplVerID','LastMsgSeqNumProcessed','SecureData','SecureDataLen','XmlData','XmlDataLen'))">
+					<xsl:call-template name="GenerateAttribute">
+						<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
+						<xsl:with-param name="TagID" select="$TagID"/>
+						<xsl:with-param name="MsgCategory" select="$MsgCategory"/>
+						<xsl:with-param name="Presence" select="@presence"/>
+					</xsl:call-template>
+				</xsl:if>
 			</xsl:when>
 			<xsl:when test="localfn:isComponent(.)">
 					<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=$TagID]"/>
@@ -536,14 +539,14 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:param name="ComponentType"/>
 		<xsl:variable name="MsgElemID" select="@id"/>
 		<xso:complexType>
-		<xsl:choose>
-			<xsl:when test="@name='StandardHeader'">
-				<xsl:attribute name="name">BaseHeader_t</xsl:attribute>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:attribute name="name"><xsl:value-of select="@name"/>_Block_t</xsl:attribute>
-			</xsl:otherwise>
-		</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="@name='StandardHeader'">
+					<xsl:attribute name="name">BaseHeader_t</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="name"><xsl:value-of select="@name"/>_Block_t</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
 			<xso:annotation>
 				<xsl:call-template name="appinfo-Xref-builder">
 					<xsl:with-param name="name" select="@name"/>
