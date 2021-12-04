@@ -140,7 +140,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					</xsl:call-template>
 				</xsl:otherwise>
 			</xsl:choose>
-			<xsl:call-template name="GenerateComponent"/>
+			<xsl:call-template name="GenerateComponent">
+				<xsl:with-param name="ComponentType" select="$ComponentType"/>
+			</xsl:call-template>
 		</xsl:for-each>
 		<!-- Message Header -->
 		<xso:attributeGroup name="MessageHeaderAttributes"> </xso:attributeGroup>
@@ -230,7 +232,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:param name="Section"/>
 		<xsl:param name="CategoryID"/>
 		<xsl:param name="CategoryAbbrName"/>
-		<xsl:param name="EnumDatatype"/>
+		<!-- <xsl:param name="EnumDatatype"/> -->
 		<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,'.')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
@@ -249,9 +251,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:if test="$Type != ''">
 					<xsl:attribute name="Type" select="$Type"/>
 				</xsl:if>
-				<xsl:if test="$EnumDatatype">
+				<!-- <xsl:if test="$EnumDatatype">
 					<xsl:attribute name="UsesEnumsFromTag" select="$EnumDatatype"/>
-				</xsl:if>
+				</xsl:if> -->
 				<xsl:if test="$AbbrName">
 					<xsl:attribute name="AbbrName" select="$AbbrName"/>
 				</xsl:if>
@@ -497,8 +499,6 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
 				<xsl:variable name="TYPE" select="$field/@type"/>
 				<!-- Exclude standard header fields that are not applicable to FIXML or part of the FIXML root element -->
-				<xsl:comment>Field name: <xsl:value-of select="$field/@name"/>
-				</xsl:comment>
 				<xsl:if test="not($field/@name=('ApplExtID','BeginString','BodyLength','CstmApplVerID','LastMsgSeqNumProcessed','SecureData','SecureDataLen','XmlData','XmlDataLen'))">
 					<xsl:call-template name="GenerateAttribute">
 						<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
