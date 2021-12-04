@@ -74,7 +74,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:param name="node"/>
 		<xsl:variable name="TYPE" select="local-name($node)"/>
 		<xsl:choose>
-			<xsl:when test="$TYPE = 'component' or $TYPE = 'componentRef'">true</xsl:when>
+			<xsl:when test="$TYPE = ('component','componentRef')">true</xsl:when>
 			<xsl:otherwise>false</xsl:otherwise>
 		</xsl:choose>
 	</xsl:function>
@@ -94,7 +94,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:param name="node"/>
 		<xsl:variable name="TYPE" select="local-name($node)"/>
 		<xsl:choose>
-			<xsl:when test="$TYPE = 'group' or $TYPE = 'groupRef'">true</xsl:when>
+			<xsl:when test="$TYPE = ('group','groupRef')">true</xsl:when>
 			<xsl:otherwise>false</xsl:otherwise>
 		</xsl:choose>
 	</xsl:function>
@@ -102,7 +102,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:param name="fieldRef"/>
 		<xsl:variable name="TYPE" select="local-name($fieldRef)"/>
 		<xsl:choose>
-			<xsl:when test="$TYPE = 'field' or $TYPE = 'fieldRef'">true</xsl:when>
+			<xsl:when test="$TYPE = ('field','fieldRef')">true</xsl:when>
 			<xsl:otherwise>false</xsl:otherwise>
 		</xsl:choose>
 	</xsl:function>
@@ -119,7 +119,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<!-- First test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
 					<!-- Second test identifies repeating groups, otherwise it can only be a simple component. -->
 					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
-					<xsl:when test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'">BlockRepeating</xsl:when>
+					<xsl:when test="local-name(current()) = ('group','groupRef')">BlockRepeating</xsl:when>
 					<xsl:otherwise>Block</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
@@ -371,7 +371,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<!-- First test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
 					<!-- Second test identifies repeating groups, otherwise it can only be a simple component. -->
 					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
-					<xsl:when test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'">BlockRepeating</xsl:when>
+					<xsl:when test="local-name(current()) = ('group','groupRef')">BlockRepeating</xsl:when>
 					<xsl:otherwise>Block</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
@@ -405,7 +405,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:otherwise><xsl:attribute name="minOccurs">1</xsl:attribute></xsl:otherwise>
 			</xsl:choose>
 			<xsl:choose>
-				<xsl:when test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'"><xsl:attribute name="maxOccurs">unbounded</xsl:attribute></xsl:when>
+				<xsl:when test="local-name(current()) = ('group','groupRef')"><xsl:attribute name="maxOccurs">unbounded</xsl:attribute></xsl:when>
 				<xsl:otherwise><xsl:attribute name="maxOccurs">1</xsl:attribute></xsl:otherwise>
 			</xsl:choose>
 			</xso:element>
