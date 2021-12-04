@@ -43,7 +43,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:value-of select="$fmNamespace"/>
 		</xsl:namespace>
 		<xsl:namespace name="xsi">http://www.w3.org/2001/XMLSchema-instance</xsl:namespace>
-		<xsl:attribute name="xsi:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance"><xsl:text>http://www.fixprotocol.org/FIXML-</xsl:text><xsl:value-of select="$VersionString"/><xsl:text>/METADATA fixml-metadata-</xsl:text><xsl:value-of select="$VersionString"/><xsl:text>.xsd</xsl:text></xsl:attribute>
+		<xsl:attribute name="xsi:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance"><xsl:text>http://www.fixprotocol.org/FIXML-</xsl:text><xsl:value-of select="$VersionString"/><xsl:text>/METADATA fixml-metadata-</xsl:text><xsl:value-of select="lower-case($VersionString)"/><xsl:text>.xsd</xsl:text></xsl:attribute>
 		<xsl:attribute name="targetNamespace"><xsl:value-of select="$schemaNamespace"/></xsl:attribute>
 		<xsl:attribute name="elementFormDefault">qualified</xsl:attribute>
 		<xsl:attribute name="attributeFormDefault">unqualified</xsl:attribute>
@@ -192,7 +192,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xso:attributeGroup ref="BatchAttributes"/>
 		</xso:complexType>
 		<!-- FIXML Root Element Declaration -->
-		<xsl:variable name="VersionString" select="/fixr:repository/@name)"/>
+		<!-- FIX version as of EP260 only "FIX.Latest"-->
+		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
 		<xsl:variable name="schemaDate" select="/fixr:repository/fixr:metadata/dc:date"/>
 		<xso:attributeGroup name="FixmlAttributes">
 			<xso:attribute name="v" type="Version_t" fixed="{$VersionString}"/>
@@ -745,7 +746,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 	</xsl:template>
 	<xsl:template match="fixr:repository">
 		<xsl:variable name="VersionString" select="substring-after(@name,'.')"/>
-		<xsl:variable name="FileSuffix" select="concat('-',$VersionString,'.xsd')"/>
+		<xsl:variable name="FileSuffix" select="concat('-',lower-case($VersionString),'.xsd')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
 
