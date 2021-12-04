@@ -116,10 +116,10 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[@category='Session'and not(@name='StandardTrailer')]|/fixr:repository/fixr:groups/fixr:group[@category='Session']">
 			<xsl:variable name="ComponentType">
 				<xsl:choose>
-					<!-- First test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
-					<!-- Second test identifies repeating groups, otherwise it can only be a simple component. -->
-					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
+					<!-- First test identifies repeating groups, otherwise it can only be a simple component but maybe XML data. -->
+					<!-- Second test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
 					<xsl:when test="local-name(current()) = ('group','groupRef')">BlockRepeating</xsl:when>
+					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
 					<xsl:otherwise>Block</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
@@ -368,10 +368,10 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:sort select="@id"/>
 			<xsl:variable name="ComponentType">
 				<xsl:choose>
-					<!-- First test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
-					<!-- Second test identifies repeating groups, otherwise it can only be a simple component. -->
-					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
+					<!-- First test identifies repeating groups, otherwise it can only be a simple component but maybe XML data. -->
+					<!-- Second test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
 					<xsl:when test="local-name(current()) = ('group','groupRef')">BlockRepeating</xsl:when>
+					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
 					<xsl:otherwise>Block</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
