@@ -446,7 +446,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 	</xsl:template>
 	<xsl:template name="GenerateElementSequence">
 		<xsl:param name="ComponentType"/>
-			<xsl:if test="not(ComponentType = 'XMLDataBlock')">
+			<xsl:if test="not($ComponentType = 'XMLDataBlock')">
 			<xso:group name="{localfn:fixupCompName(.)}Elements">
 				<xso:sequence>
 					<xsl:call-template name="SelectElements"/>
