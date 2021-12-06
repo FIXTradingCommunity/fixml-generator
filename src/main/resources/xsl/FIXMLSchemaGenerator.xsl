@@ -232,7 +232,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<xsl:param name="Section"/>
 		<xsl:param name="CategoryID"/>
 		<xsl:param name="CategoryAbbrName"/>
-		<!-- <xsl:param name="EnumDatatype"/> -->
+		<xsl:param name="EnumDatatype"/>
 		<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,'.')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
@@ -251,9 +251,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:if test="$Type != ''">
 					<xsl:attribute name="Type" select="$Type"/>
 				</xsl:if>
-				<!-- <xsl:if test="$EnumDatatype">
+				<xsl:if test="$EnumDatatype">
 					<xsl:attribute name="UsesEnumsFromTag" select="$EnumDatatype"/>
-				</xsl:if> -->
+				</xsl:if>
 				<xsl:if test="$AbbrName">
 					<xsl:attribute name="AbbrName" select="$AbbrName"/>
 				</xsl:if>
@@ -616,10 +616,11 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:with-param name="Tag" select="@id"/>
 					<xsl:with-param name="Type" select="$TYPE"/>
 					<xsl:with-param name="ComponentType" select="'Field'"/>
-					<xsl:with-param name="AbbrName" select="@abbrName"/>
+					<xsl:with-param name="AbbrName" select="$CODESET/@abbrName"/>
 					<xsl:with-param name="CategoryID" select="@baseCategory"/>
 					<xsl:with-param name="CategoryAbbrName" select="@baseCategoryAbbrName"/>
-					<!--<xsl:with-param name="EnumDatatype" select="EnumDatatype"/>-->
+					<!-- ID from codeset required for UsesEnumsFromTag attribute in FIXML -->
+					<xsl:with-param name="EnumDatatype" select="$CODESET/@id"/>
 				</xsl:call-template>
 				<xsl:if test="$CODESET">
 					<xsl:call-template name="AppinfoEnumsDocBuilder">
@@ -779,7 +780,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 						<xso:attribute name="Section" type="xs:string" use="optional"/>
 						<xso:attribute name="Category" type="xs:string" use="optional"/>
 						<xso:attribute name="CategoryAbbrName" type="xs:string" use="optional"/>
-						<!--<xso:attribute name="UsesEnumsFromTag" type="xs:string" use="optional"/>-->
+						<xso:attribute name="UsesEnumsFromTag" type="xs:string" use="optional"/>
 					</xso:complexType>
 				</xso:element>
 				<xso:element name="EnumDoc">
