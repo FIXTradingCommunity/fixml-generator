@@ -616,7 +616,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:with-param name="Tag" select="@id"/>
 					<xsl:with-param name="Type" select="$TYPE"/>
 					<xsl:with-param name="ComponentType" select="'Field'"/>
-					<xsl:with-param name="AbbrName" select="$CODESET/@abbrName"/>
+					<xsl:with-param name="AbbrName" select="@abbrName"/>
 					<xsl:with-param name="CategoryID" select="@baseCategory"/>
 					<xsl:with-param name="CategoryAbbrName" select="@baseCategoryAbbrName"/>
 					<!-- ID from codeset required for UsesEnumsFromTag attribute in FIXML -->
