@@ -251,7 +251,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:if test="$Type != ''">
 					<xsl:attribute name="Type" select="$Type"/>
 				</xsl:if>
-				<xsl:if test="$EnumDatatype">
+				<!-- Exception: field is the original one with the code set (they share the same ID)-->
+				<xsl:if test="$EnumDatatype and not($Tag = $EnumDatatype)">
 					<xsl:attribute name="UsesEnumsFromTag" select="$EnumDatatype"/>
 				</xsl:if>
 				<xsl:if test="$AbbrName">
@@ -620,10 +621,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:with-param name="CategoryID" select="@baseCategory"/>
 					<xsl:with-param name="CategoryAbbrName" select="@baseCategoryAbbrName"/>
 					<!-- ID from codeset required for UsesEnumsFromTag attribute in FIXML -->
-					<!-- Exception: field is the original one with the code set (they share the same ID)-->
-					<xsl:if test="not($Tag = $CODESET/@id)">
-						<xsl:with-param name="EnumDatatype" select="$CODESET/@id"/>
-					</xsl:if>
+					<xsl:with-param name="EnumDatatype" select="$CODESET/@id"/>
 				</xsl:call-template>
 				<xsl:if test="$CODESET">
 					<xsl:call-template name="AppinfoEnumsDocBuilder">
