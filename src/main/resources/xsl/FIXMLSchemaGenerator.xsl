@@ -645,7 +645,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:attribute name="base" select="$OUTPUT_TYPE"/>
 				<xsl:if test="$CODESET">
 					<xsl:choose>
-						<xsl:when test="Type = 'MultipleCharValue'">
+						<xsl:when test="$TYPE = 'MultipleCharValue'">
 							<xsl:attribute name="base">xs:string</xsl:attribute>
 							<xso:pattern>
 								<xsl:variable name="PATTERN_STRING">
@@ -664,7 +664,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 								<xsl:attribute name="value" select="$PATTERN_STRING"/>
 							</xso:pattern>
 						</xsl:when>
-						<xsl:when test="Type = 'MultipleStringValue'">
+						<xsl:when test="$TYPE = 'MultipleStringValue'">
 							<xsl:attribute name="base">xs:string</xsl:attribute>
 							<xso:pattern>
 								<xsl:variable name="PATTERN_STRING">
