@@ -106,6 +106,19 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:otherwise>false</xsl:otherwise>
 		</xsl:choose>
 	</xsl:function>
+	<xsl:function name="localfn:isSessionField" as="xs:boolean">
+		<xsl:param name="field"/>
+		<xsl:variable name="TAGNUM" select="$field/@id"/>
+		<!-- Look for a reference to the given field in components, groups and messages that have a category other than session -->
+		<!-- If the search is successful in any one of them, then the field is (also) used outside of the session category -->
+		<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/>
+		<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/>
+		<xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message[not(@category='Session')]/fixr:structure/fixr:fieldref[@id=$TAGNUM]"/>
+		<xsl:choose>
+			<xsl:when test="$COMPREF or $GROUPREF or $MSGREF">false</xsl:when>
+			<xsl:otherwise>true</xsl:otherwise>
+		</xsl:choose>
+	</xsl:function>
 	<xsl:template name="fixml-components-root">
 		<xso:simpleType name="Version_t">
 			<xso:restriction base="xs:string">
@@ -875,7 +888,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<!-- Currently 8 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len) -->
 				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup' or ends-with(@name,'SecurityXML') or ends-with(@name,'SecurityXMLLen'))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
-					<xsl:call-template name="simpleTypeBuilder"/>
+					<xsl:if test="not(localfn:isSessionField(.))">
+						<xsl:call-template name="simpleTypeBuilder"/>
+					</xsl:if>
 				</xsl:for-each>
 			</xso:schema>
 		</xsl:result-document>
