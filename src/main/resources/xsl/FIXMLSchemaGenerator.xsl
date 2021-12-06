@@ -650,13 +650,13 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 								<xsl:variable name="PATTERN_STRING">
 									<xsl:value-of>[</xsl:value-of>
 									<xsl:for-each select="$CODESET/fixr:code">
-										<xsl:sort select="sort" data-type="number"/>
-										<xsl:value-of select="value"/>
+										<xsl:sort select="@sort" data-type="number"/>
+										<xsl:value-of select="@value"/>
 									</xsl:for-each>
 									<xsl:value-of>](\s[</xsl:value-of>
 									<xsl:for-each select="$CODESET/fixr:code">
-										<xsl:sort select="sort" data-type="number"/>
-										<xsl:value-of select="value"/>
+										<xsl:sort select="@sort" data-type="number"/>
+										<xsl:value-of select="@value"/>
 									</xsl:for-each>
 									<xsl:value-of>])*</xsl:value-of>
 								</xsl:variable>
@@ -669,9 +669,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 								<xsl:variable name="PATTERN_STRING">
 									<xsl:value-of>(</xsl:value-of>
 									<xsl:for-each select="$CODESET/fixr:code">
-										<xsl:sort select="sort" data-type="number"/>
+										<xsl:sort select="@sort" data-type="number"/>
 										<xsl:value-of>(</xsl:value-of>
-										<xsl:value-of select="value"/>
+										<xsl:value-of select="@value"/>
 										<xsl:value-of>)</xsl:value-of>
 										<xsl:if test="position() &lt; count($CODESET/fixr:code)">
 											<xsl:value-of>|</xsl:value-of>
@@ -679,9 +679,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 									</xsl:for-each>
 									<xsl:value-of>)(\s(</xsl:value-of>
 									<xsl:for-each select="$CODESET/fixr:code">
-										<xsl:sort select="sort" data-type="number"/>
+										<xsl:sort select="@sort" data-type="number"/>
 										<xsl:value-of>(</xsl:value-of>
-										<xsl:value-of select="value"/>
+										<xsl:value-of select="@value"/>
 										<xsl:value-of>)</xsl:value-of>
 										<xsl:if test="position() &lt;  count($CODESET/fixr:code)">
 											<xsl:value-of>|</xsl:value-of>
@@ -694,7 +694,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:for-each select="$CODESET/fixr:code">
-								<xsl:sort select="sort" data-type="number"/>
+								<xsl:sort select="@sort" data-type="number"/>
 								<xso:enumeration>
 									<xsl:attribute name="value" select="@value"/>
 								</xso:enumeration>
@@ -714,7 +714,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<!-- Add enums appinfo section -->
 		<xso:appinfo>
 			<xsl:for-each select="$CODES/fixr:code">
-				<xsl:sort select="sort" data-type="number"/>
+				<xsl:sort select="@sort" data-type="number"/>
 				<xsl:element name="fm:EnumDoc" namespace="{$fmNamespace}">
 					<xsl:attribute name="value" select="@value"/>
 					<!-- Name of the value (not the symbolic name) to be retrieved from its synopsis. Remove leading/trailing whitespaces -->
