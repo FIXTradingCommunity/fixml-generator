@@ -888,7 +888,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<!-- Currently 8 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len) -->
 				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup' or ends-with(@name,'SecurityXML') or ends-with(@name,'SecurityXMLLen'))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
-					<xsl:if test="not(localfn:isSessionField(.))">
+					<xsl:if test="not(localfn:isSessionField(current()))">
 						<xsl:call-template name="simpleTypeBuilder"/>
 					</xsl:if>
 				</xsl:for-each>
