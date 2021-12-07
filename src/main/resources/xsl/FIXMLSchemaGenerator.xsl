@@ -881,6 +881,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/>
 					<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/> -->
 					<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[not(@category='Session')]/fixr:fieldref">
+					<xsl:comment> FIELDREF:<xsl:value-of select="@id"/> | TAGNUM: <xsl:value-of select="$TAGNUM"/>
+					</xsl:comment>
 						<xsl:if test="@id = $TAGNUM">
 							<xsl:call-template name="simpleTypeBuilder"/>
 						</xsl:if>
