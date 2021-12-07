@@ -875,7 +875,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<!-- Special handling of fields for XML definitions of securities required as only the XML schema fields are needed in FIXML -->
 				<!-- Currently 10 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len), SecureDataLen, SecureData, XmlDataLen, XmlData -->
 				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup' or
-					@name=('BeginString','BodyLength') or
+					@name=('BeginString','BodyLength','ApplExtID','CstmApplVerID','LastMsgSeqNumProcessed') or
 					ends-with(@name,'SecurityXML') or ends-with(@name,'SecurityXMLLen') or
 					starts-with(@name,'SecureData') or starts-with(@name,'XMLData'))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
@@ -887,7 +887,9 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message[not(@category='Session')]/fixr:structure/fixr:fieldRef[@id=$TAGNUM]"/>
 					<!-- If the search is successful in any one of them, then the field is (also) used outside of the session category -->
 					<!-- Exceptions: create simple types for FIXML batch header fields -->
-					<xsl:if test="$COMPREF or $GROUPREF or $MSGREF or starts-with(@name,'Batch')" >
+					<xsl:if test="$COMPREF or $GROUPREF or $MSGREF or
+						starts-with(@name,'Batch') or
+						@name=('DefaultApplExtID','DefaultApplVerID','DefaultVerIndicator','RefTagID','SessionStatus')" >
 						<xsl:call-template name="simpleTypeBuilder"/>
 					</xsl:if>
 				</xsl:for-each>
