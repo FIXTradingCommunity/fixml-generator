@@ -883,7 +883,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<!-- Currently 8 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len) -->
 				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup' or ends-with(@name,'SecurityXML') or ends-with(@name,'SecurityXMLLen'))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
-					<xsl:variable name="TAGNUM" select="$field/@id"/>
+					<xsl:variable name="TAGNUM" select="@id"/>
 					<!-- Look for a reference to the given field in components, groups and messages that have a category other than session -->
 					<xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message[not(@category='Session')]/fixr:structure/fixr:fieldref[@id=$TAGNUM]"/>
 					<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/>
