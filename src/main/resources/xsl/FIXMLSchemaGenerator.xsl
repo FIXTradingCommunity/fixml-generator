@@ -25,7 +25,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		Copyright(c) FIX Protocol Limited. All rights reserved.
 
         Comments and errors should be posted on the FIX Protocol web-site https://www.fixtrading.org/
-</xsl:comment>
+		</xsl:comment>
 	<xsl:text>
 
 </xsl:text>
@@ -106,14 +106,6 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:otherwise>false</xsl:otherwise>
 		</xsl:choose>
 	</xsl:function>
-	<!-- <xsl:function name="localfn:isSessionField" as="xs:boolean">
-		<xsl:param name="field"/>
-		<xsl:variable name="TAGNUM" select="$field/@id"/>
-		<xsl:choose>
-			<xsl:when test="$COMPREF or $GROUPREF or $MSGREF">false</xsl:when>
-			<xsl:otherwise>true</xsl:otherwise>
-		</xsl:choose>
-	</xsl:function> -->
 	<xsl:template name="fixml-components-root">
 		<xso:simpleType name="Version_t">
 			<xso:restriction base="xs:string">
@@ -889,6 +881,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/>
 					<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/>
 					<!-- If the search is successful in any one of them, then the field is (also) used outside of the session category -->
+					<xsl:comment> <xsl:value-of select="@name"/>:<xsl:value-of select="$MSGREF/@id"/>:<xsl:value-of select="$COMPREF/@id"/>:<xsl:value-of select="$GROUPREF/@id"/>:
+					</xsl:comment>
 					<xsl:if test="$COMPREF or $GROUPREF or $MSGREF">
 						<xsl:call-template name="simpleTypeBuilder"/>
 					</xsl:if>
