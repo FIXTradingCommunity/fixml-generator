@@ -885,7 +885,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message/fixr:structure/fixr:fieldref[@id=$TAGNUM][1]"/>
 					<xsl:variable name="MSG" select="/fixr:repository/fixr:messages/fixr:message[@id=9 and structure/fieldref=37]"/>
 					<!-- If the search is successful in any one of them, then the field is (also) used outside of the session category -->
-					<xsl:comment> <xsl:value-of select="@name"/>(<xsl:value-of select="$TAGNUM"/>):<xsl:value-of select="$MSG/@name"/>:<xsl:value-of select="$$MSG/@id"/>:<xsl:value-of select="$GROUPREF"/>:
+					<xsl:comment> <xsl:value-of select="@name"/>(<xsl:value-of select="$TAGNUM"/>):<xsl:value-of select="$MSG/@name"/>:<xsl:value-of select="$MSG/@id"/>:<xsl:value-of select="$GROUPREF"/>:
 					</xsl:comment>
 					<xsl:if test="$COMPREF or $GROUPREF or $MSGREF">
 						<xsl:call-template name="simpleTypeBuilder"/>
