@@ -715,7 +715,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 		<!-- Add enums appinfo section -->
 		<xso:appinfo>
 			<xsl:for-each select="$CODES/fixr:code">
-				<xsl:sort select="@value" data-type="text" order="ascending"/>
+				<xsl:sort select="@sort" data-type="number"/>
 				<xsl:element name="fm:EnumDoc" namespace="{$fmNamespace}">
 					<xsl:attribute name="value" select="@value"/>
 					<!-- Name of the value (not the symbolic name) to be retrieved from its synopsis. Remove leading/trailing whitespaces -->
