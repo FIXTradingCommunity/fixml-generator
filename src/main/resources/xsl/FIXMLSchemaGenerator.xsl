@@ -610,7 +610,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:attribute name="name"><xsl:value-of select="$TYPE_NAME"/></xsl:attribute>
 			<xso:annotation>
 				<xsl:call-template name="DocumentationBuilder">
-					<xsl:with-param name="DocText" select="current()/fixr:annotation/fixr:documentation"/>
+					<xsl:with-param name="DocText" select="current()/fixr:annotation/fixr:documentation[purpose='SYNOPSIS']"/>
 				</xsl:call-template>
 				<xsl:call-template name="appinfo-Xref-builder">
 					<xsl:with-param name="name" select="@name"/>
