@@ -877,7 +877,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup' or
 					@name=('BeginString','BodyLength','ApplExtID','CstmApplVerID','LastMsgSeqNumProcessed') or
 					ends-with(@name,'SecurityXML') or ends-with(@name,'SecurityXMLLen') or
-					starts-with(@name,'SecureData') or starts-with(@name,'XMLData'))]">
+					starts-with(@name,'SecureData') or starts-with(@name,'XmlData'))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:variable name="TAGNUM" select="@id"/>
 					<!-- Look for a reference to the given field in components, groups and messages that have a category other than "Session" -->
@@ -886,7 +886,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group[not(@category='Session') or @name='HopGrp']/fixr:fieldRef[@id=$TAGNUM]/@id"/>
 					<xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message[not(@category='Session')]/fixr:structure/fixr:fieldRef[@id=$TAGNUM]"/>
 					<!-- If the search is successful in any one of them, then the field is (also) used outside of the session category -->
-					<!-- Exceptions: create simple types for FIXML batch header fields -->
+					<!-- Exceptions: create simple types for FIXML batch header and other fields explicitly listed below -->
+					<!-- XXX: to be confirmed why they should be part of FIXML -->
 					<xsl:if test="$COMPREF or $GROUPREF or $MSGREF or
 						starts-with(@name,'Batch') or
 						@name=('DefaultApplExtID','DefaultApplVerID','DefaultVerIndicator','RefTagID','SessionStatus')" >
