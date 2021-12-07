@@ -877,9 +877,12 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:variable name="TAGNUM" select="@id"/>
 					<!-- Look for a reference to the given field in components, groups and messages that have a category other than session -->
-					<xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message[not(@category='Session')]/fixr:structure/fixr:fieldref[@id=$TAGNUM]"/>
+					<!-- <xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message[not(@category='Session')]/fixr:structure/fixr:fieldref[@id=$TAGNUM]"/>
 					<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/>
-					<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/>
+					<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/> -->
+					<xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message/fixr:structure/fixr:fieldref[@id=$TAGNUM]"/>
+					<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component/fixr:fieldref[@id=$TAGNUM]"/>
+					<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group/fixr:fieldref[@id=$TAGNUM]"/>
 					<!-- If the search is successful in any one of them, then the field is (also) used outside of the session category -->
 					<xsl:comment> <xsl:value-of select="@name"/>:<xsl:value-of select="$MSGREF/@id"/>:<xsl:value-of select="$COMPREF/@id"/>:<xsl:value-of select="$GROUPREF/@id"/>:
 					</xsl:comment>
