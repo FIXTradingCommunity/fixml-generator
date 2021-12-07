@@ -877,7 +877,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:variable name="TAGNUM" select="@id"/>
 					<!-- Look for a reference to the given field in components, groups and messages that have a category other than session -->
-					<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component[not(@category='Session')]/fixr:fieldRef[@id=$TAGNUM]"/>
+					<!-- Exception: components StandardHeader, HopGrp -->
+					<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component[not(@category='Session') or @name=('StandardHeader','HopGrp')]/fixr:fieldRef[@id=$TAGNUM]"/>
 					<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group[not(@category='Session')]/fixr:fieldRef[@id=$TAGNUM]/@id"/>
 					<xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message[not(@category='Session')]/fixr:structure/fixr:fieldRef[@id=$TAGNUM]"/>
 					<!-- If the search is successful in any one of them, then the field is (also) used outside of the session category -->
