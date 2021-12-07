@@ -499,7 +499,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:when test="localfn:isField(.)">
 				<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
 				<xsl:variable name="TYPE" select="$field/@type"/>
-				<!-- Exclude standard header fields that are not applicable to FIXML or part of the FIXML root element -->
+				<!-- Exclude standard header fields that are not applicable to FIXML or are covered by being part of the FIXML root element -->
 				<xsl:if test="not($field/@name=('ApplExtID','BeginString','BodyLength','CstmApplVerID','LastMsgSeqNumProcessed','SecureData','SecureDataLen','XmlData','XmlDataLen'))">
 					<xsl:call-template name="GenerateAttribute">
 						<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
@@ -872,8 +872,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<xsl:attribute name="schemaLocation" select="concat('fixml-datatypes',$FileSuffix)"/>
 				</xso:include>
 				<!-- Special handling of fields for XML definitions of securities required as only the XML schema fields are needed in FIXML -->
-				<!-- Currently 10 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len), SecureDataLen, SecureData -->
-				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup' or ends-with(@name,'SecurityXML') or ends-with(@name,'SecurityXMLLen') or starts-with(@name,'SecureData'))]">
+				<!-- Currently 10 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len), SecureDataLen, SecureData, XmlDataLen, XmlData -->
+				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup' or ends-with(@name,'SecurityXML') or ends-with(@name,'SecurityXMLLen') or starts-with(@name,'SecureData') or starts-with(@name,'XMLData'))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:variable name="TAGNUM" select="@id"/>
 					<!-- Look for a reference to the given field in components, groups and messages that have a category other than "Session" -->
