@@ -880,13 +880,13 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<!-- <xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message[not(@category='Session')]/fixr:structure/fixr:fieldref[@id=$TAGNUM]"/>
 					<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/>
 					<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/> -->
-					<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[not(@category='Session')]/fixr:fieldref">
+					<xsl:for-each select="/fixr:repository/fixr:components/fixr:component/fixr:fieldref">
 					<xsl:comment> FIELDREF:<xsl:value-of select="@id"/> | TAGNUM: <xsl:value-of select="$TAGNUM"/>
 					</xsl:comment>
-						<xsl:if test="@id = $TAGNUM">
+						<!-- <xsl:if test="@id = $TAGNUM">
 							<xsl:call-template name="simpleTypeBuilder"/>
 						</xsl:if>
-					</xsl:for-each>
+					</xsl:for-each> -->
 					<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/>
 					<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group/fixr:fieldref[@id=$TAGNUM]/@id"/>
 					<xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message/fixr:structure/fixr:fieldref[@id=$TAGNUM][1]"/>
