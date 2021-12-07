@@ -106,14 +106,14 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:otherwise>false</xsl:otherwise>
 		</xsl:choose>
 	</xsl:function>
-	<xsl:function name="localfn:isSessionField" as="xs:boolean">
+	<!-- <xsl:function name="localfn:isSessionField" as="xs:boolean">
 		<xsl:param name="field"/>
 		<xsl:variable name="TAGNUM" select="$field/@id"/>
 		<xsl:choose>
 			<xsl:when test="$COMPREF or $GROUPREF or $MSGREF">false</xsl:when>
 			<xsl:otherwise>true</xsl:otherwise>
 		</xsl:choose>
-	</xsl:function>
+	</xsl:function> -->
 	<xsl:template name="fixml-components-root">
 		<xso:simpleType name="Version_t">
 			<xso:restriction base="xs:string">
