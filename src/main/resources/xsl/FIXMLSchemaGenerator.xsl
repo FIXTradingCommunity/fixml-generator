@@ -880,16 +880,13 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 					<!-- <xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message[not(@category='Session')]/fixr:structure/fixr:fieldref[@id=$TAGNUM]"/>
 					<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/>
 					<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group[not(@category='Session')]/fixr:fieldref[@id=$TAGNUM]"/> -->
-					<xsl:for-each select="/fixr:repository/fixr:components/fixr:component/fixr:fieldRef[@id=$TAGNUM]">
+					<!-- <xsl:for-each select="/fixr:repository/fixr:components/fixr:component/fixr:fieldRef[@id=$TAGNUM]">
 					<xsl:comment> FIELDREF:<xsl:value-of select="../@id"/> | TAGNUM: <xsl:value-of select="$TAGNUM"/>
 					</xsl:comment>
-						<!-- <xsl:if test="@id = $TAGNUM">
-							<xsl:call-template name="simpleTypeBuilder"/>
-						</xsl:if> -->
-					</xsl:for-each>
+					</xsl:for-each> -->
 					<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component[not(@category='Session')]/fixr:fieldRef[@id=$TAGNUM]"/>
-					<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group/fixr:fieldRef[@id=$TAGNUM]/@id"/>
-					<xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message/fixr:structure/fixr:fieldRef[@id=$TAGNUM][1]"/>
+					<!-- <xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group/fixr:fieldRef[@id=$TAGNUM]/@id"/>
+					<xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message/fixr:structure/fixr:fieldRef[@id=$TAGNUM][1]"/> -->
 					<!-- <xsl:variable name="MSG" select="/fixr:repository/fixr:messages/fixr:message[@id=9 and structure/fieldref/id=37]"/> -->
 					<xsl:variable name="MSG" select="/fixr:repository/fixr:messages/fixr:message[@id=9]"/>
 					<!-- If the search is successful in any one of them, then the field is (also) used outside of the session category -->
