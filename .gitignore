@@ -1,3 +1,5 @@
 target
 .settings
-tests
+tests/old
+tests/new
+tests/diff
