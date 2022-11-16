@@ -919,7 +919,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 					<xsl:variable name="notReqXML" select="current()/fixr:annotation[1]/fixr:appinfo[1]"/>
 					<xso:test>
 						<xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
-						<xsl:attribute name="synopsis"><xsl:value-of select="$synopsis)"/></xsl:attribute>
+						<xsl:attribute name="synopsis"><xsl:value-of select="$synopsis"/></xsl:attribute>
 						<xsl:attribute name="notReqXML"><xsl:value-of select="concat($FldTag,':',$notReqXML)"/></xsl:attribute>
 					</xso:test>
 					<xsl:variable name="TYPEORCODESETNAME" select="@type"/>
