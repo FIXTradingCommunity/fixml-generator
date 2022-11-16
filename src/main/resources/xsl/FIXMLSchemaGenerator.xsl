@@ -913,11 +913,10 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<!-- <xsl:for-each select="/fixr:repository/fixr:fields/fixr:field"> -->
 				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(current()/fixr:annotation/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType[@notReqXML='1'])]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
-					<xso:test>IMPL FILE ENTRY</xso:test>
-					<!-- <xsl:if test="current()/fixr:annotation/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType/@notReqXML='1'">
-						<xso:test>Found field to be ignored</xso:test>
-					</xsl:if> -->
 					<xsl:variable name="FldTag" select="@id"/>
+					<xsl:if test="/fixr:repository/fixr:fields/fixr:field[@id=$FldTag]/fixr:annotation/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType/@notReqXML='1'">
+						<xso:test>Found field to be ignored</xso:test>
+					</xsl:if>
 					<xsl:variable name="TYPEORCODESETNAME" select="@type"/>
 					<xsl:variable name="CODESET" select="/fixr:repository/fixr:codeSets/fixr:codeSet[@name=$TYPEORCODESETNAME]"/>
 					<xsl:choose>
