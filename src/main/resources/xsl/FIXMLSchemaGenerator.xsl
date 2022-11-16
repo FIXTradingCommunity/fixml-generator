@@ -6,7 +6,9 @@
 ****************************************************************************-->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xso="http://www.w3.org/1999/XSL/TransformAlias" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:localfn="http://dummy" exclude-result-prefixes="xs localfn"
-xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://purl.org/dc/elements/1.1/">
+xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository"
+xmlns:fixml="http://fixprotocol.io/2020/orchestra/fixml"
+xmlns:dc="http://purl.org/dc/elements/1.1/">
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>
 	<xsl:param name="targetDir"/>
 	<xsl:namespace-alias stylesheet-prefix="xso" result-prefix="xs"/>
