@@ -915,9 +915,9 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:variable name="FldTag" select="@id"/>
 					<xsl:variable name="notReqXML" select="/fixr:repository/fixr:fields/fixr:field[@id=$FldTag]/fixr:annotation/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType/@notReqXML"/>
-						<xso:test>
-							<xsl:attribute name="notReqXML" select="concat($FldTag,':',$notReqXML)"/>
-						</xso:test>
+					<xso:test>
+						<xsl:attribute name="notReqXML"><xsl:value-of select="concat($FldTag,':',$notReqXML)"/></xsl:attribute>
+					</xso:test>
 					</xsl:if>
 					<xsl:variable name="TYPEORCODESETNAME" select="@type"/>
 					<xsl:variable name="CODESET" select="/fixr:repository/fixr:codeSets/fixr:codeSet[@name=$TYPEORCODESETNAME]"/>
