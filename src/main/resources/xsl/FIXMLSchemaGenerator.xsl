@@ -466,7 +466,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<!-- Special handling of fields for XML definitions of securities required as only the XML schema fields are needed in FIXML -->
 		<!-- Currently 8 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len) -->
 		<!-- Fields cannot be excluded based on type (data/Length/XMLData) as this would also exclude all EncodedXXX(Len) fields -->
-		<xsl:if test="not(ends-with($field/@name,'SecurityXML') or ends-with($field/@name,'SecurityXMLLen') or $field='MsgDirection')">
+		<xsl:if test="not(ends-with($field/@name,'SecurityXML') or ends-with($field/@name,'SecurityXMLLen'))">
 			<xso:attribute>
 				<xsl:choose>
 					<xsl:when test="$field/@baseCategory=$MsgCategory">
@@ -502,7 +502,9 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
 				<xsl:variable name="TYPE" select="$field/@type"/>
 				<!-- Exclude standard header fields that are not applicable to FIXML or are covered by being part of the FIXML root element -->
-				<xsl:if test="not($field/@name=('ApplExtID','BeginString','BodyLength','CstmApplVerID','LastMsgSeqNumProcessed','SecureData','SecureDataLen','XmlData','XmlDataLen'))">
+				<!-- <xsl:if test="not($field/@name=('ApplExtID','BeginString','BodyLength','CstmApplVerID','LastMsgSeqNumProcessed','SecureData','SecureDataLen','XmlData','XmlDataLen'))"> -->
+				<!-- Exclude fields not required for XML, e.g. NumInGroup and length fields -->
+				<xsl:test="not($field/fixr:annotation/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType[@notReqXML='1'])">
 					<xsl:call-template name="GenerateAttribute">
 						<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
 						<xsl:with-param name="TagID" select="$TagID"/>
