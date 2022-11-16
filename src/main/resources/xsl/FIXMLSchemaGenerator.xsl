@@ -916,7 +916,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 					<xsl:variable name="TYPEORCODESETNAME" select="@type"/>
 					<xsl:variable name="CODESET" select="/fixr:repository/fixr:codeSets/fixr:codeSet[@name=$TYPEORCODESETNAME]"/>
 					<xsl:variable name="ReqXML" select="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"/>
-					<xsl:when test="$ReqXML">
+					<xsl:if test="$ReqXML">
 						<xsl:choose>
 							<xsl:when test="$CODESET">
 								<xsl:choose>
@@ -938,7 +938,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 								</xsl:choose>
 							</xsl:when>
 						</xsl:choose>
-					</xsl:when>
+					</xsl:if>
 				</xsl:for-each>
 			</xso:schema>
 		</xsl:result-document>
