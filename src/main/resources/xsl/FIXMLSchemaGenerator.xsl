@@ -910,13 +910,12 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<xso:include>
 					<xsl:attribute name="schemaLocation"><xsl:value-of select="concat('fixml-fields-base',$FileSuffix)"/></xsl:attribute>
 				</xso:include>
-				<!-- <xsl:for-each select="/fixr:repository/fixr:fields/fixr:field"> -->
-				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(current()/fixr:annotation/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType[@notReqXML='1'])]">
+				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:variable name="FldTag" select="@id"/>
-					<xsl:variable name="notReqXML" select="exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML'])"/>
+					<xsl:variable name="ReqXML" select="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"/>
 					<xso:test>
-						<xsl:attribute name="notReqXML"><xsl:value-of select="concat($FldTag,':',$notReqXML)"/></xsl:attribute>
+						<xsl:attribute name="ReqXML"><xsl:value-of select="concat($FldTag,':',$ReqXML)"/></xsl:attribute>
 					</xso:test>
 					<xsl:variable name="TYPEORCODESETNAME" select="@type"/>
 					<xsl:variable name="CODESET" select="/fixr:repository/fixr:codeSets/fixr:codeSet[@name=$TYPEORCODESETNAME]"/>
