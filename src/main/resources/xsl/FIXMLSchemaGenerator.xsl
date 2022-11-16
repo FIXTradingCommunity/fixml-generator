@@ -634,8 +634,8 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 			<xsl:variable name="OUTPUT_TYPE">
 				<xsl:choose>
 					<!-- Only use mapped datatype if the FIX datatype is a base XML datatype, e.g. int results in xs:integer. -->
-					<xsl:when test="$DATATYPE/fixr:mappedDatatype[@standard='XML' and @builtin='1']">
-						<xsl:value-of select="$DATATYPE/fixr:mappedDatatype[@standard='XML' and @builtin='1']/@base"/>
+					<xsl:when test="$DATATYPE/fixr:mappedDatatype[@standard='XML' and @builtin='true']">
+						<xsl:value-of select="$DATATYPE/fixr:mappedDatatype[@standard='XML' and @builtin='true']/@base"/>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:value-of select="$TYPE"/>
@@ -940,7 +940,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:call-template name="fixml-namespace"/>
 				<xsl:for-each select="/fixr:repository/fixr:datatypes/fixr:datatype">
 					<!-- Only use mapped datatype if it is not already a base XML datatype. -->
-					<xsl:if test="child::fixr:mappedDatatype[@standard='XML' and @builtin='0']">
+					<xsl:if test="child::fixr:mappedDatatype[@standard='XML' and @builtin='false']">
 						<xso:simpleType>
 							<xsl:attribute name="name" select="@name"/>
 							<xso:annotation>
