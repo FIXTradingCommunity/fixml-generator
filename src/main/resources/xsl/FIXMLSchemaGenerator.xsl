@@ -720,7 +720,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				<xsl:element name="fm:EnumDoc" namespace="{$fmNamespace}">
 					<xsl:attribute name="value" select="@value"/>
 					<!-- Name of the value (not the symbolic name) to be retrieved from its synopsis. Remove leading/trailing whitespaces -->
-					<!-- <xsl:value-of select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'])"/> -->
+					<xsl:value-of select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][1])"/>
 				</xsl:element>
 			</xsl:for-each>
 		</xso:appinfo>
