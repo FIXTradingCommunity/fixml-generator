@@ -499,12 +499,8 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		  <xsl:variable name="TagID" select="@id"/>
 			<xsl:choose>
 				<xsl:when test="localfn:isField(.)">
-					<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
-					<xsl:variable name="TYPE" select="$field/@type"/>
-				<!-- Exclude standard header fields that are not applicable to FIXML or are covered by being part of the FIXML root element -->
-				<!-- <xsl:if test="not($field/@name=('ApplExtID','BeginString','BodyLength','CstmApplVerID','LastMsgSeqNumProcessed','SecureData','SecureDataLen','XmlData','XmlDataLen'))"> -->
-				<!-- Exclude fields not required for XML, e.g. NumInGroup and length fields -->
-					<xsl:if test="not($field/fixr:annotation/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType/@notReqXML='1')">
+					<!-- Exclude fields not required for XML, e.g. NumInGroup and length fields -->
+					<xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
 						<xsl:call-template name="GenerateAttribute">
 							<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
 							<xsl:with-param name="TagID" select="$TagID"/>
@@ -876,27 +872,10 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<xso:include>
 					<xsl:attribute name="schemaLocation" select="concat('fixml-datatypes',$FileSuffix)"/>
 				</xso:include>
-				<!-- Special handling of fields for XML definitions of securities required as only the XML schema fields are needed in FIXML -->
-				<!-- Currently 10 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len), SecureDataLen, SecureData, XmlDataLen, XmlData -->
-				<!-- <xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup' or
-					@name=('BeginString','BodyLength','ApplExtID','CstmApplVerID','LastMsgSeqNumProcessed') or
-					ends-with(@name,'SecurityXML') or ends-with(@name,'SecurityXMLLen') or
-					starts-with(@name,'SecureData') or starts-with(@name,'XmlData'))]"> -->
-				<!-- Exclude fields not required for XML, e.g. NumInGroup and length fields -->
-				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(current()/fixr:annotation/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType[@notReqXML='1'])]">
+				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
-					<xsl:variable name="TAGNUM" select="@id"/>
-					<!-- Look for a reference to the given field in components, groups and messages that have a category other than "Session" -->
-					<!-- Exceptions for category "Session": component StandardHeader (partially, see above), group HopGrp -->
-					<xsl:variable name="COMPREF" select="/fixr:repository/fixr:components/fixr:component[not(@category='Session') or @name='StandardHeader']/fixr:fieldRef[@id=$TAGNUM]"/>
-					<xsl:variable name="GROUPREF" select="/fixr:repository/fixr:groups/fixr:group[not(@category='Session') or @name='HopGrp']/fixr:fieldRef[@id=$TAGNUM]/@id"/>
-					<xsl:variable name="MSGREF" select="/fixr:repository/fixr:messages/fixr:message[not(@category='Session')]/fixr:structure/fixr:fieldRef[@id=$TAGNUM]"/>
-					<!-- If the search is successful in any one of them, then the field is (also) used outside of the session category -->
-					<!-- Exceptions: create simple types for FIXML batch header and other fields explicitly listed below -->
-					<!-- XXX: to be confirmed why they should be part of FIXML -->
-					<xsl:if test="$COMPREF or $GROUPREF or $MSGREF or
-						starts-with(@name,'Batch') or
-						@name=('DefaultApplExtID','DefaultApplVerID','DefaultVerIndicator','RefTagID','SessionStatus')" >
+					<!-- Exclude fields not required for XML, e.g. NumInGroup and length fields -->
+					<xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
 						<xsl:call-template name="simpleTypeBuilder"/>
 					</xsl:if>
 				</xsl:for-each>
@@ -912,9 +891,9 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				</xso:include>
 				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
-					<xsl:variable name="FldTag" select="@id"/>
 					<xsl:variable name="TYPEORCODESETNAME" select="@type"/>
 					<xsl:variable name="CODESET" select="/fixr:repository/fixr:codeSets/fixr:codeSet[@name=$TYPEORCODESETNAME]"/>
+					<!-- Exclude fields not required for XML, e.g. NumInGroup and length fields -->
 					<xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
 						<xsl:choose>
 							<xsl:when test="$CODESET">
