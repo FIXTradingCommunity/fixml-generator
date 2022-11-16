@@ -874,10 +874,11 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository" xmlns:dc="http://pu
 				</xso:include>
 				<!-- Special handling of fields for XML definitions of securities required as only the XML schema fields are needed in FIXML -->
 				<!-- Currently 10 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len), SecureDataLen, SecureData, XmlDataLen, XmlData -->
-				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup' or
+				<!-- <xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup' or
 					@name=('BeginString','BodyLength','ApplExtID','CstmApplVerID','LastMsgSeqNumProcessed') or
 					ends-with(@name,'SecurityXML') or ends-with(@name,'SecurityXMLLen') or
-					starts-with(@name,'SecureData') or starts-with(@name,'XmlData'))]">
+					starts-with(@name,'SecureData') or starts-with(@name,'XmlData'))]"> -->
+				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(current()/fixr:annotation/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType[@notReqXML='1'])]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:variable name="TAGNUM" select="@id"/>
 					<!-- Look for a reference to the given field in components, groups and messages that have a category other than "Session" -->
