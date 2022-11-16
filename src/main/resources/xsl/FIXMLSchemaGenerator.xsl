@@ -466,7 +466,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<!-- Special handling of fields for XML definitions of securities required as only the XML schema fields are needed in FIXML -->
 		<!-- Currently 8 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len) -->
 		<!-- Fields cannot be excluded based on type (data/Length/XMLData) as this would also exclude all EncodedXXX(Len) fields -->
-		<xsl:if test="not(ends-with($field/@name,'SecurityXML') or ends-with($field/@name,'SecurityXMLLen'))">
+		<xsl:if test="not(ends-with($field/@name,'SecurityXML') or ends-with($field/@name,'SecurityXMLLen') or $field='MsgDirection')">
 			<xso:attribute>
 				<xsl:choose>
 					<xsl:when test="$field/@baseCategory=$MsgCategory">
@@ -880,6 +880,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 					@name=('BeginString','BodyLength','ApplExtID','CstmApplVerID','LastMsgSeqNumProcessed') or
 					ends-with(@name,'SecurityXML') or ends-with(@name,'SecurityXMLLen') or
 					starts-with(@name,'SecureData') or starts-with(@name,'XmlData'))]"> -->
+				<!-- Exclude fields not required for XML, e.g. NumInGroup and length fields -->
 				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(current()/fixr:annotation/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType[@notReqXML='1'])]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:variable name="TAGNUM" select="@id"/>
