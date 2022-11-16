@@ -499,12 +499,13 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		  <xsl:variable name="TagID" select="@id"/>
 			<xsl:choose>
 				<xsl:when test="localfn:isField(.)">
-				<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
+					<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
+					<xsl:variable name="notReqXML" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]/fixr:annotation/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType/@notReqXML"/>
 				<xsl:variable name="TYPE" select="$field/@type"/>
 				<!-- Exclude standard header fields that are not applicable to FIXML or are covered by being part of the FIXML root element -->
 				<!-- <xsl:if test="not($field/@name=('ApplExtID','BeginString','BodyLength','CstmApplVerID','LastMsgSeqNumProcessed','SecureData','SecureDataLen','XmlData','XmlDataLen'))"> -->
 				<!-- Exclude fields not required for XML, e.g. NumInGroup and length fields -->
-				<xsl:test="not($field/fixr:annotation/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType/@notReqXML='1')">
+				<xsl:test="not($notReqXML='1')">
 					<xsl:call-template name="GenerateAttribute">
 						<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
 						<xsl:with-param name="TagID" select="$TagID"/>
