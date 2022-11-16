@@ -916,7 +916,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 					<xsl:variable name="FldTag" select="@id"/>
 					<xsl:variable name="notReqXML1" select="/fixr:repository/fixr:fields/fixr:field[@id=$FldTag]/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType/@notReqXML"/>
 					<xsl:variable name="synopsis" select="current()/fixr:annotation[1]/fixr:documentation[1]"/>
-					<xsl:variable name="notReqXML" select="current()/fixr:annotation[1]/fixr:appinfo[1]/fixml:FIXMLencodingType"/>
+					<xsl:variable name="notReqXML" select="current()/fixr:annotation[1]/fixr:appinfo[local-name()='FIXMLEncodingType']"/>
 					<xso:test>
 						<xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
 						<xsl:attribute name="synopsis"><xsl:value-of select="$synopsis"/></xsl:attribute>
