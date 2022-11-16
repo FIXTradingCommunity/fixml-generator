@@ -913,33 +913,32 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:variable name="FldTag" select="@id"/>
-					<xsl:variable name="ReqXML" select="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"/>
-					<xso:test>
-						<xsl:attribute name="ReqXML"><xsl:value-of select="concat($FldTag,':',$ReqXML)"/></xsl:attribute>
-					</xso:test>
 					<xsl:variable name="TYPEORCODESETNAME" select="@type"/>
 					<xsl:variable name="CODESET" select="/fixr:repository/fixr:codeSets/fixr:codeSet[@name=$TYPEORCODESETNAME]"/>
-					<xsl:choose>
-						<xsl:when test="$CODESET">
-							<xsl:choose>
-								<xsl:when test="@unionDataType">
-									<xsl:call-template name="simple-type-union">
-										<xsl:with-param name="TypeName" select="@name"/>
-										<!-- Strip "CodeSet" from the enumeration type name to avoid change to FIXML schema generated from Basis repository -->
-										<xsl:with-param name="EnumTypeName" select="substring-before(@type,'CodeSet')"/>
-										<xsl:with-param name="UnionTypeName" select="@unionDataType"/>
-									</xsl:call-template>
-								</xsl:when>
-								<xsl:otherwise>
-									<xsl:call-template name="simple-type-restriction">
-										<xsl:with-param name="TypeName" select="@name"/>
-										<!-- Strip "CodeSet" from the enumeration type name to avoid change to FIXML schema generated from Basis repository -->
-										<xsl:with-param name="EnumTypeName" select="substring-before(@type,'CodeSet')"/>
-									</xsl:call-template>
-								</xsl:otherwise>
-							</xsl:choose>
-						</xsl:when>
-					</xsl:choose>
+					<xsl:variable name="ReqXML" select="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"/>
+					<xsl:when test="$ReqXML">
+						<xsl:choose>
+							<xsl:when test="$CODESET">
+								<xsl:choose>
+									<xsl:when test="@unionDataType">
+										<xsl:call-template name="simple-type-union">
+											<xsl:with-param name="TypeName" select="@name"/>
+											<!-- Strip "CodeSet" from the enumeration type name to avoid change to FIXML schema generated from Basis repository -->
+											<xsl:with-param name="EnumTypeName" select="substring-before(@type,'CodeSet')"/>
+											<xsl:with-param name="UnionTypeName" select="@unionDataType"/>
+										</xsl:call-template>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:call-template name="simple-type-restriction">
+											<xsl:with-param name="TypeName" select="@name"/>
+											<!-- Strip "CodeSet" from the enumeration type name to avoid change to FIXML schema generated from Basis repository -->
+											<xsl:with-param name="EnumTypeName" select="substring-before(@type,'CodeSet')"/>
+										</xsl:call-template>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:when>
+						</xsl:choose>
+					</xsl:when>
 				</xsl:for-each>
 			</xso:schema>
 		</xsl:result-document>
