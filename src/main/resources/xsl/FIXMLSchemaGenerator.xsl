@@ -918,7 +918,6 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 					<xso:test>
 						<xsl:attribute name="notReqXML"><xsl:value-of select="concat($FldTag,':',$notReqXML)"/></xsl:attribute>
 					</xso:test>
-					</xsl:if>
 					<xsl:variable name="TYPEORCODESETNAME" select="@type"/>
 					<xsl:variable name="CODESET" select="/fixr:repository/fixr:codeSets/fixr:codeSet[@name=$TYPEORCODESETNAME]"/>
 					<xsl:choose>
