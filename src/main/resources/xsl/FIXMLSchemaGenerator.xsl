@@ -55,7 +55,6 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<xsl:param name="component"/>
 		<xsl:choose>
 			<!-- XXX: HACK: Special case for legacy compatibility i.e. JimN design errors -->
-			<!-- xsl:when test="$component/Name='HopGrp'">Hop</xsl:when -->
 			<xsl:when test="$component/@name='StandardHeader'">BaseHeader</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$component/@name"/>
@@ -463,10 +462,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<xsl:param name="MsgCategory"/>
 		<xsl:param name="Presence"/>
 		<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
-		<!-- Special handling of fields for XML definitions of securities required as only the XML schema fields are needed in FIXML -->
-		<!-- Currently 8 exceptions: (Derivative/Underlying/Leg)SecurityXML(Len) -->
-		<!-- Fields cannot be excluded based on type (data/Length/XMLData) as this would also exclude all EncodedXXX(Len) fields -->
-		<!-- <xsl:if test="not(ends-with($field/@name,'SecurityXML') or ends-with($field/@name,'SecurityXMLLen'))"> -->
+		<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
 		<xsl:if test="not(exists($field/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
 			<xso:attribute>
 				<xsl:choose>
@@ -500,7 +496,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		  <xsl:variable name="TagID" select="@id"/>
 			<xsl:choose>
 				<xsl:when test="localfn:isField(.)">
-					<!-- Exclude fields not required for XML, e.g. NumInGroup and length fields -->
+					<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
 					<xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
 						<xsl:call-template name="GenerateAttribute">
 							<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
@@ -875,7 +871,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				</xso:include>
 				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
-					<!-- Exclude fields not required for XML, e.g. NumInGroup and length fields -->
+					<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
 					<xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
 						<xsl:call-template name="simpleTypeBuilder"/>
 					</xsl:if>
@@ -894,7 +890,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:variable name="TYPEORCODESETNAME" select="@type"/>
 					<xsl:variable name="CODESET" select="/fixr:repository/fixr:codeSets/fixr:codeSet[@name=$TYPEORCODESETNAME]"/>
-					<!-- Exclude fields not required for XML, e.g. NumInGroup and length fields -->
+					<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
 					<xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
 						<xsl:choose>
 							<xsl:when test="$CODESET">
