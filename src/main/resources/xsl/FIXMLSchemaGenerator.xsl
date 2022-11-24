@@ -722,14 +722,16 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 					<xsl:attribute name="value" select="@value"/>
 					<!-- Name of the value (not the symbolic name) to be retrieved from its synopsis. Remove leading/trailing whitespaces -->
 					<!-- Synopsis may contain multiple paragraphs (<documentation> elements) -->
-					<xsl:variable name="description" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][1])"/>
-					<xsl:variable name="more" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][2])"/>
-					<xsl:if test="more">
-						<xsl:variable name="description" select="concat($description, $newline, $more)"/>
-					</xsl:if>
-					<xsl:value-of select="$description"/>
-					<!-- <xsl:value-of select="concat($description1, $newline, $description2)"/> -->
-					<!-- <xsl:value-of select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][1])"/> -->
+					<xsl:variable name="description1" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][1])"/>
+					<xsl:variable name="description2" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][2])"/>
+					<xsl:choose>
+						<xsl:when test="description2">
+							<xsl:value-of select="concat($description1, $newline, $description2)"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="$description1"/>
+						</xsl:otherwise>
+					</xsl:choose>
 				</xsl:element>
 			</xsl:for-each>
 		</xso:appinfo>
