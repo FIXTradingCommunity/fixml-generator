@@ -8,7 +8,7 @@
 xmlns:localfn="http://dummy" exclude-result-prefixes="xs localfn"
 xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository"
 xmlns:fixml="http://fixprotocol.io/2020/orchestra/fixml"
-xmlns:dc="http://purl.org/dc/elements/1.1/">
+xmlns:dcterms="http://purl.org/dc/terms/">
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>
 	<xsl:param name="targetDir"/>
 	<xsl:namespace-alias stylesheet-prefix="xso" result-prefix="xs"/>
