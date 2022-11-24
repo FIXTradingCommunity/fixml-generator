@@ -725,7 +725,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 					<xsl:variable name="description1" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][1])"/>
 					<xsl:variable name="description2" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][2])"/>
 					<xsl:choose>
-						<xsl:when test="description2">
+						<xsl:when test="$description2">
 							<xsl:value-of select="concat($description1, $newline, $description2)"/>
 						</xsl:when>
 						<xsl:otherwise>
