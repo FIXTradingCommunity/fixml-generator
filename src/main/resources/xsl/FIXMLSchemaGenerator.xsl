@@ -452,7 +452,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<xsl:param name="Presence"/>
 		<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
 		<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
-		<xsl:if test="not(exists($field/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
+		<!-- <xsl:if test="not(exists($field/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"> -->
 			<xso:attribute>
 				<xsl:choose>
 					<xsl:when test="$field/@baseCategory=$MsgCategory">
@@ -474,7 +474,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 					</xsl:otherwise>
 				</xsl:choose>
 			</xso:attribute>
-		</xsl:if>
+		<!-- </xsl:if> -->
 	</xsl:template>
 	<xsl:template name="SelectAttributes">
 		<xsl:param name="ComponentType"/>
@@ -484,7 +484,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<xsl:for-each select="child::*">
 		  <xsl:variable name="TagID" select="@id"/>
 			<xsl:choose>
-				<xsl:when test="localfn:isField(.)">
+				<xsl:when test="localfn:isField(.) and not(exists(/fixr:repository/fixr:fields/fixr:field[@id=$TagID and exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML'])))">
 					<xsl:call-template name="GenerateAttribute">
 						<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
 						<xsl:with-param name="TagID" select="$TagID"/>
@@ -887,34 +887,32 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<xso:include>
 					<xsl:attribute name="schemaLocation"><xsl:value-of select="concat('fixml-fields-base',$FileSuffix)"/></xsl:attribute>
 				</xso:include>
+				<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
 				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:variable name="TYPEORCODESETNAME" select="@type"/>
 					<xsl:variable name="CODESET" select="/fixr:repository/fixr:codeSets/fixr:codeSet[@name=$TYPEORCODESETNAME]"/>
-					<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
-					<!-- <xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"> -->
-						<xsl:choose>
-							<xsl:when test="$CODESET">
-								<xsl:choose>
-									<xsl:when test="@unionDataType">
-										<xsl:call-template name="simple-type-union">
-											<xsl:with-param name="TypeName" select="@name"/>
-											<!-- Strip "CodeSet" from the enumeration type name to avoid change to FIXML schema generated from Basis repository -->
-											<xsl:with-param name="EnumTypeName" select="substring-before(@type,'CodeSet')"/>
-											<xsl:with-param name="UnionTypeName" select="@unionDataType"/>
-										</xsl:call-template>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:call-template name="simple-type-restriction">
-											<xsl:with-param name="TypeName" select="@name"/>
-											<!-- Strip "CodeSet" from the enumeration type name to avoid change to FIXML schema generated from Basis repository -->
-											<xsl:with-param name="EnumTypeName" select="substring-before(@type,'CodeSet')"/>
-										</xsl:call-template>
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:when>
-						</xsl:choose>
-					<!-- </xsl:if> -->
+					<xsl:choose>
+						<xsl:when test="$CODESET">
+							<xsl:choose>
+								<xsl:when test="@unionDataType">
+									<xsl:call-template name="simple-type-union">
+										<xsl:with-param name="TypeName" select="@name"/>
+										<!-- Strip "CodeSet" from the enumeration type name to avoid change to FIXML schema generated from Basis repository -->
+										<xsl:with-param name="EnumTypeName" select="substring-before(@type,'CodeSet')"/>
+										<xsl:with-param name="UnionTypeName" select="@unionDataType"/>
+									</xsl:call-template>
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:call-template name="simple-type-restriction">
+										<xsl:with-param name="TypeName" select="@name"/>
+										<!-- Strip "CodeSet" from the enumeration type name to avoid change to FIXML schema generated from Basis repository -->
+										<xsl:with-param name="EnumTypeName" select="substring-before(@type,'CodeSet')"/>
+									</xsl:call-template>
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:when>
+					</xsl:choose>
 				</xsl:for-each>
 			</xso:schema>
 		</xsl:result-document>
