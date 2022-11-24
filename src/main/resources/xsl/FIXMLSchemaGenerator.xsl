@@ -79,18 +79,6 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 			<xsl:otherwise>false</xsl:otherwise>
 		</xsl:choose>
 	</xsl:function>
-	<xsl:function name="localfn:isInlinedComponent" as="xs:boolean">
-		<xsl:param name="node"/>
-		<xsl:variable name="TYPE" select="local-name($node)"/>
-		<xsl:choose>
-			<!-- XXX: Attribute "rendering" exists in Basic. Unified has "inlined".
-								Orchestra has "rendering" but unified2orchestra does not seem to create it.
-								See unified2orchestra issue #8
-			-->
-			<xsl:when test="$TYPE='component' and contains($node/@rendering, 'fixml=Inlined')">true</xsl:when>
-			<xsl:otherwise>false</xsl:otherwise>
-		</xsl:choose>
-	</xsl:function>
 	<xsl:function name="localfn:isGroup" as="xs:boolean">
 		<xsl:param name="node"/>
 		<xsl:variable name="TYPE" select="local-name($node)"/>
