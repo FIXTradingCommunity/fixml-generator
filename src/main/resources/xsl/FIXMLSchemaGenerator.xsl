@@ -110,7 +110,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 	<xsl:template name="fixml-components-root">
 		<xso:simpleType name="Version_t">
 			<xso:restriction base="xs:string">
-				<xso:pattern value="(FIX.2.7)|(FIX.3.0)|(FIX\.4\.[0-4])|(FIX\.5\.0(SP[1-2]))|(FIXT.1.[1-2])"/>
+				<xso:pattern value="(FIX.2.7)|(FIX.3.0)|(FIX\.4\.[0-4])|(FIX\.5\.0(SP[1-2]))|(FIXT.1.[1-2]|(FIX.Latest))"/>
 			</xso:restriction>
 		</xso:simpleType>
 		<!-- Special case, generate required session component definitions (exception: StandardTrailer)-->
@@ -119,7 +119,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<xsl:choose>
 					<!-- First test identifies repeating groups, otherwise it can only be a simple component but maybe XML data. -->
 					<!-- Second test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
-					<!-- Second test IGNORES fields of type XMLData if they are not required for FIXML -->
+					<!-- Second test ignores fields of type XMLData if they are not required for FIXML -->
 					<xsl:when test="local-name(current()) = ('group','groupRef')">BlockRepeating</xsl:when>
 					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id and not(exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))]">XMLDataBlock</xsl:when>
 					<xsl:otherwise>Block</xsl:otherwise>
@@ -718,7 +718,11 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<xsl:element name="fm:EnumDoc" namespace="{$fmNamespace}">
 					<xsl:attribute name="value" select="@value"/>
 					<!-- Name of the value (not the symbolic name) to be retrieved from its synopsis. Remove leading/trailing whitespaces -->
-					<xsl:value-of select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][1])"/>
+					<!-- Synopsis may contain multiple paragraphs (<documentation> elements) -->
+					<xsl:variable name="description1" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][1])"/>
+					<xsl:variable name="description2" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][2])"/>
+					<xsl:value-of select="concat($description1, &#10;, $description2)"/>
+					<!-- <xsl:value-of select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][1])"/> -->
 				</xsl:element>
 			</xsl:for-each>
 		</xso:appinfo>
