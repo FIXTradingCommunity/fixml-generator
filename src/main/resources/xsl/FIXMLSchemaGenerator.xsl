@@ -119,8 +119,9 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<xsl:choose>
 					<!-- First test identifies repeating groups, otherwise it can only be a simple component but maybe XML data. -->
 					<!-- Second test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
+					<!-- Second test IGNORES fields of type XMLData if they are not required for FIXML -->
 					<xsl:when test="local-name(current()) = ('group','groupRef')">BlockRepeating</xsl:when>
-					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
+					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current() and not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
 					<xsl:otherwise>Block</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
