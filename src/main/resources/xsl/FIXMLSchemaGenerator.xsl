@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--************************************************************************
 *
-*   Generates FIXML V1.2 Schema files from an Orchestra Version 1.0 XML file
+*   Generates FIXML V1.1 Schema files from an Orchestra Version 1.0 XML file
+*
+*	FIXML Schema generation with XSLT
+*   Original concept and some code remnants remain from Kevin Houstoun.
+*	Rewritten by JimN jimn@lasalletech.com
+*	Copyright FIX Protocol Limited
+*
+*	  - Created	5 September 2004 Kevin Houstoun
+*	  - Revised	19 October 2007 Jim N
+*   - Re-created 15 February 2009 Jim N moved to using element and attribute instead of CDATA
+*     restructured for XSLT 2.0 following similar programs created by Phil Oliver.
+*   - Major cleanup 5 June 2010 (PAO) Finished the move to elements from CDATA sections. Removed
+*     much of the remaining hard coding.
+*   - Final Refactoring and Testing 2010-11-17 Jim N
+*   - Added hardcoded batch header fields 2014-05-07 Jim N
+*   - Initial version for the migration to Orchestra as source repository 2019-02-06 Don Mendelson
+*   - Added support for Orchestra appinfo element identifying fields not required in FIXML 2022-11-24 Hanno Klein
 *
 ****************************************************************************-->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xso="http://www.w3.org/1999/XSL/TransformAlias" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:localfn="http://dummy" exclude-result-prefixes="xs localfn"
 xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository"
-xmlns:fixml="http://fixprotocol.io/2020/orchestra/fixml"
-xmlns:dcterms="http://purl.org/dc/terms/">
+xmlns:fixml="http://fixprotocol.io/2020/orchestra/fixml">
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>
 	<xsl:param name="targetDir"/>
 	<xsl:namespace-alias stylesheet-prefix="xso" result-prefix="xs"/>
@@ -185,8 +200,9 @@ xmlns:dcterms="http://purl.org/dc/terms/">
 		</xso:complexType>
 		<!-- FIXML Root Element Declaration -->
 		<!-- FIX version as of EP260 only "FIX.Latest"-->
+		<!-- Schema date still fixed to release date of FIXML v1.1 as v1.2 is work in progress -->
 		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
-		<xsl:variable name="schemaDate" select="/fixr:repository/fixr:metadata/dcterms:date"/>
+		<xsl:variable name="schemaDate" select="2014-05-07"/>
 		<xso:attributeGroup name="FixmlAttributes">
 			<xso:attribute name="v" type="Version_t" fixed="{$VersionString}"/>
 			<xso:attribute name="r" type="xs:string" use="optional"/>
