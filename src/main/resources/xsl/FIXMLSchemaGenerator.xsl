@@ -186,7 +186,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<!-- FIXML Root Element Declaration -->
 		<!-- FIX version as of EP260 only "FIX.Latest"-->
 		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
-		<xsl:variable name="schemaDate" select="/fixr:repository/fixr:metadata/dc:date"/>
+		<xsl:variable name="schemaDate" select="/fixr:repository/fixr:metadata/dcterms:date"/>
 		<xso:attributeGroup name="FixmlAttributes">
 			<xso:attribute name="v" type="Version_t" fixed="{$VersionString}"/>
 			<xso:attribute name="r" type="xs:string" use="optional"/>
