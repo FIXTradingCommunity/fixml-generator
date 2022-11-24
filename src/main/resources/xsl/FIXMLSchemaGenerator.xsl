@@ -484,7 +484,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<xsl:for-each select="child::*">
 		  <xsl:variable name="TagID" select="@id"/>
 			<xsl:choose>
-				<xsl:when test="localfn:isField(.) and not(exists(/fixr:repository/fixr:fields/fixr:field[@id=$TagID and exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML'])))">
+				<xsl:when test="localfn:isField(.) and not(exists(/fixr:repository/fixr:fields/fixr:field[@id=$TagID and exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML'])]))">
 					<xsl:call-template name="GenerateAttribute">
 						<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
 						<xsl:with-param name="TagID" select="$TagID"/>
