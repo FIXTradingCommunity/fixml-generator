@@ -26,6 +26,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository"
 xmlns:fixml="http://fixprotocol.io/2020/orchestra/fixml">
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>
 	<xsl:param name="targetDir"/>
+	<!-- Schema date still fixed to release date of FIXML v1.1. Version 1.2 is work in progress -->
 	<xsl:param name="schemaDate">2014-05-07</xsl:param>
 	<xsl:namespace-alias stylesheet-prefix="xso" result-prefix="xs"/>
 
@@ -201,9 +202,7 @@ xmlns:fixml="http://fixprotocol.io/2020/orchestra/fixml">
 		</xso:complexType>
 		<!-- FIXML Root Element Declaration -->
 		<!-- FIX version as of EP260 only "FIX.Latest"-->
-		<!-- Schema date still fixed to release date of FIXML v1.1 as v1.2 is work in progress -->
 		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
-		<!-- <xsl:variable name="schemaDate" select="2014-05-07"/> -->
 		<xso:attributeGroup name="FixmlAttributes">
 			<xso:attribute name="v" type="Version_t" fixed="{$VersionString}"/>
 			<xso:attribute name="r" type="xs:string" use="optional"/>
