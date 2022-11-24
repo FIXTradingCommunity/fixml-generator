@@ -451,30 +451,27 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<xsl:param name="MsgCategory"/>
 		<xsl:param name="Presence"/>
 		<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
-		<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
-		<!-- <xsl:if test="not(exists($field/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"> -->
-			<xso:attribute>
-				<xsl:choose>
-					<xsl:when test="$field/@baseCategory=$MsgCategory">
-						<xsl:attribute name="name" select="$field/@baseCategoryAbbrName"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:attribute name="name" select="$field/@abbrName"/>
-					</xsl:otherwise>
-				</xsl:choose>
-				<xsl:attribute name="type" select="concat($field/@name,'_t')"/>
-				<xsl:choose>
-					<!-- XXX HACK: Add the parameter to this method just to make it so
-									 MsgSeqNum in the StandardHeader could be made optional -->
-					<xsl:when test="$Presence='required' and $MakeAllReferencesOptional=0">
-						<xsl:attribute name="use">required</xsl:attribute>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:attribute name="use">optional</xsl:attribute>
-					</xsl:otherwise>
-				</xsl:choose>
-			</xso:attribute>
-		<!-- </xsl:if> -->
+		<xso:attribute>
+			<xsl:choose>
+				<xsl:when test="$field/@baseCategory=$MsgCategory">
+					<xsl:attribute name="name" select="$field/@baseCategoryAbbrName"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="name" select="$field/@abbrName"/>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:attribute name="type" select="concat($field/@name,'_t')"/>
+			<xsl:choose>
+				<!-- XXX HACK: Add the parameter to this method just to make it so
+									     MsgSeqNum in the StandardHeader could be made optional -->
+				<xsl:when test="$Presence='required' and $MakeAllReferencesOptional=0">
+					<xsl:attribute name="use">required</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="use">optional</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xso:attribute>
 	</xsl:template>
 	<xsl:template name="SelectAttributes">
 		<xsl:param name="ComponentType"/>
@@ -484,6 +481,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<xsl:for-each select="child::*">
 		  <xsl:variable name="TagID" select="@id"/>
 			<xsl:choose>
+				<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
 				<xsl:when test="localfn:isField(.) and not(exists(/fixr:repository/fixr:fields/fixr:field[@id=$TagID and exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML'])]))">
 					<xsl:call-template name="GenerateAttribute">
 						<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
