@@ -450,9 +450,9 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<xsl:param name="TagID"/>
 		<xsl:param name="MsgCategory"/>
 		<xsl:param name="Presence"/>
-		<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
+		<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID and not(exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))]"/>
 		<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
-		<xsl:if test="not(exists($field/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
+		<!-- <xsl:if test="not(exists($field/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"> -->
 			<xso:attribute>
 				<xsl:choose>
 					<xsl:when test="$field/@baseCategory=$MsgCategory">
@@ -474,7 +474,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 					</xsl:otherwise>
 				</xsl:choose>
 		</xso:attribute>
-		</xsl:if>
+		<!-- </xsl:if> -->
 	</xsl:template>
 	<xsl:template name="SelectAttributes">
 		<xsl:param name="ComponentType"/>
