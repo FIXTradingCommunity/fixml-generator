@@ -872,12 +872,10 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<xso:include>
 					<xsl:attribute name="schemaLocation" select="concat('fixml-datatypes',$FileSuffix)"/>
 				</xso:include>
+				<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
 				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
-					<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
-					<!-- <xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"> -->
-						<xsl:call-template name="simpleTypeBuilder"/>
-					<!-- </xsl:if> -->
+					<xsl:call-template name="simpleTypeBuilder"/>
 				</xsl:for-each>
 			</xso:schema>
 		</xsl:result-document>
@@ -889,12 +887,12 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<xso:include>
 					<xsl:attribute name="schemaLocation"><xsl:value-of select="concat('fixml-fields-base',$FileSuffix)"/></xsl:attribute>
 				</xso:include>
-				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field">
+				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:variable name="TYPEORCODESETNAME" select="@type"/>
 					<xsl:variable name="CODESET" select="/fixr:repository/fixr:codeSets/fixr:codeSet[@name=$TYPEORCODESETNAME]"/>
 					<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
-					<xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
+					<!-- <xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"> -->
 						<xsl:choose>
 							<xsl:when test="$CODESET">
 								<xsl:choose>
@@ -916,7 +914,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 								</xsl:choose>
 							</xsl:when>
 						</xsl:choose>
-					</xsl:if>
+					<!-- </xsl:if> -->
 				</xsl:for-each>
 			</xso:schema>
 		</xsl:result-document>
