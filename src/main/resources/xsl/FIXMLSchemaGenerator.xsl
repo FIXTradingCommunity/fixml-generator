@@ -711,6 +711,8 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,'.')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
+		<xsl:variable name='newline'><xsl:text>
+		</xsl:text></xsl:variable>
 		<!-- Add enums appinfo section -->
 		<xso:appinfo>
 			<xsl:for-each select="$CODES/fixr:code">
@@ -721,7 +723,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 					<!-- Synopsis may contain multiple paragraphs (<documentation> elements) -->
 					<xsl:variable name="description1" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][1])"/>
 					<xsl:variable name="description2" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][2])"/>
-					<xsl:value-of select="concat($description1, '&#10;', $description2)"/>
+					<xsl:value-of select="concat($description1, $newline, $description2)"/>
 					<!-- <xsl:value-of select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][1])"/> -->
 				</xsl:element>
 			</xsl:for-each>
