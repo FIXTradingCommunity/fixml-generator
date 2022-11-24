@@ -721,10 +721,14 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<xsl:element name="fm:EnumDoc" namespace="{$fmNamespace}">
 					<xsl:attribute name="value" select="@value"/>
 					<!-- Name of the value (not the symbolic name) to be retrieved from its synopsis. Remove leading/trailing whitespaces -->
-					<!-- Synopsis may contain multiple paragraphs (<documentation> elements) -->
+					<!-- Synopsis may contain up to three paragraphs (<documentation> elements) -->
 					<xsl:variable name="description1" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][1])"/>
 					<xsl:variable name="description2" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][2])"/>
+					<xsl:variable name="description3" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][3])"/>
 					<xsl:choose>
+						<xsl:when test="$description3">
+							<xsl:value-of select="concat($description1, $newline, $description2, $newline, $description3)"/>
+						</xsl:when>
 						<xsl:when test="$description2">
 							<xsl:value-of select="concat($description1, $newline, $description2)"/>
 						</xsl:when>
