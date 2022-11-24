@@ -209,7 +209,7 @@ xmlns:fixml="http://fixprotocol.io/2020/orchestra/fixml">
 			<xso:attribute name="xv" type="xs:int" use="optional"/>
 			<xso:attribute name="cv" type="xs:string" use="optional"/>
 			<xso:attribute name="xr" type="xs:string" use="optional"/>
-			<xso:attribute name="s" type="xs:date" fixed="{$schemaDate}"/>
+			<xso:attribute name="s" type="xs:date" fixed="$schemaDate"/>
 		</xso:attributeGroup>
 		<xso:element name="FIXML">
 			<xso:complexType>
