@@ -452,7 +452,7 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		<xsl:param name="Presence"/>
 		<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
 		<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
-		<!-- <xsl:if test="not(exists($field/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"> -->
+		<xsl:if test="not(exists($field/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
 			<xso:attribute>
 				<xsl:choose>
 					<xsl:when test="$field/@baseCategory=$MsgCategory">
@@ -473,8 +473,8 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 						<xsl:attribute name="use">optional</xsl:attribute>
 					</xsl:otherwise>
 				</xsl:choose>
-		</xso:attribute>
-		<!-- </xsl:if> -->
+			</xso:attribute>
+		</xsl:if>
 	</xsl:template>
 	<xsl:template name="SelectAttributes">
 		<xsl:param name="ComponentType"/>
@@ -486,14 +486,14 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 			<xsl:choose>
 				<xsl:when test="localfn:isField(.)">
 					<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
-					<xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
+					<!-- <xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"> -->
 						<xsl:call-template name="GenerateAttribute">
 							<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
 							<xsl:with-param name="TagID" select="$TagID"/>
 							<xsl:with-param name="MsgCategory" select="$MsgCategory"/>
 							<xsl:with-param name="Presence" select="@presence"/>
 						</xsl:call-template>
-					</xsl:if>
+					<!-- </xsl:if> -->
 				</xsl:when>
 				<xsl:when test="localfn:isComponent(.)">
 					<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=$TagID]"/>
