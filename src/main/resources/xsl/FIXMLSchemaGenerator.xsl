@@ -485,15 +485,12 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 		  <xsl:variable name="TagID" select="@id"/>
 			<xsl:choose>
 				<xsl:when test="localfn:isField(.)">
-					<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
-					<!-- <xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"> -->
-						<xsl:call-template name="GenerateAttribute">
-							<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
-							<xsl:with-param name="TagID" select="$TagID"/>
-							<xsl:with-param name="MsgCategory" select="$MsgCategory"/>
-							<xsl:with-param name="Presence" select="@presence"/>
-						</xsl:call-template>
-					<!-- </xsl:if> -->
+					<xsl:call-template name="GenerateAttribute">
+						<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
+						<xsl:with-param name="TagID" select="$TagID"/>
+						<xsl:with-param name="MsgCategory" select="$MsgCategory"/>
+						<xsl:with-param name="Presence" select="@presence"/>
+					</xsl:call-template>
 				</xsl:when>
 				<xsl:when test="localfn:isComponent(.)">
 					<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=$TagID]"/>
@@ -875,12 +872,12 @@ xmlns:dc="http://purl.org/dc/elements/1.1/">
 				<xso:include>
 					<xsl:attribute name="schemaLocation" select="concat('fixml-datatypes',$FileSuffix)"/>
 				</xso:include>
-				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field">
+				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
-					<xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))">
+					<!-- <xsl:if test="not(exists(current()/fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))"> -->
 						<xsl:call-template name="simpleTypeBuilder"/>
-					</xsl:if>
+					<!-- </xsl:if> -->
 				</xsl:for-each>
 			</xso:schema>
 		</xsl:result-document>
