@@ -887,8 +887,7 @@ xmlns:fixml="http://fixprotocol.io/2020/orchestra/fixml">
 					<xsl:attribute name="schemaLocation" select="concat('fixml-datatypes',$FileSuffix)"/>
 				</xso:include>
 				<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
-				<!-- <xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))]"> -->
-				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']/fixml:FIXMLencodingType))]">
+				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:call-template name="simpleTypeBuilder"/>
 				</xsl:for-each>
