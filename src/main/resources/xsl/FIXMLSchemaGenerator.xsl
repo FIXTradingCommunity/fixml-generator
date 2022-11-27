@@ -22,8 +22,7 @@
 ****************************************************************************-->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xso="http://www.w3.org/1999/XSL/TransformAlias" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:localfn="http://dummy" exclude-result-prefixes="xs localfn"
-xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository"
-xmlns:fixml="http://fixprotocol.io/2020/orchestra/fixml">
+xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository">
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>
 	<xsl:param name="targetDir"/>
 	<!-- Schema date still fixed to release date of FIXML v1.1. Version 1.2 is work in progress -->
