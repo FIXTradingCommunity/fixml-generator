@@ -61,7 +61,7 @@ xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository">
 			<xsl:value-of select="$fmNamespace"/>
 		</xsl:namespace>
 		<xsl:namespace name="xsi">http://www.w3.org/2001/XMLSchema-instance</xsl:namespace>
-		<xsl:attribute name="xsi:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance"><xsl:text>http://www.fixprotocol.org/FIXML-</xsl:text><xsl:value-of select="$VersionString"/><xsl:text>/METADATA fixml-metadata-</xsl:text><xsl:value-of select="lower-case($VersionString)"/><xsl:text>.xsd</xsl:text></xsl:attribute>
+		<xsl:attribute name="xsi:schemaLocation" namespace="http://www.w3.org/2001/XMLSchema-instance"><xsl:text>http://www.fixprotocol.org/FIXML-</xsl:text><xsl:value-of select="$VersionString"/><xsl:text>/METADATA fixml-metadata-</xsl:text><xsl:value-of select="$VersionString"/><xsl:text>.xsd</xsl:text></xsl:attribute>
 		<xsl:attribute name="targetNamespace"><xsl:value-of select="$schemaNamespace"/></xsl:attribute>
 		<xsl:attribute name="elementFormDefault">qualified</xsl:attribute>
 		<xsl:attribute name="attributeFormDefault">unqualified</xsl:attribute>
