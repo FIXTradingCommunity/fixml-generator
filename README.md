@@ -9,8 +9,9 @@ Generates FIXML schemas from an Orchestra file.
 
 ### Input
 
-An Orchestra file that conforms to the XML schema of Orchestra version 1.0. 
-See GitHub project fix-orchestra module repository (https://github.com/FIXTradingCommunity/fix-orchestra/blob/master/repository/src/main/resources/xsd/repository.xsd) for the schema.
+An Orchestra file that conforms to the XML schema of Orchestra version 1.0.
+See http://fixprotocol.io/2020/orchestra/repository for the schema.
+
 #### Parameter
 `targetDir` give a path to write output files
 
@@ -25,6 +26,17 @@ Any standards-compliant XSLT 2.0 processor. The test wrapper uses Saxon-HE.
 
 A Maven/Java wrapper is provided to invoke and test the script. This is not a run-time requirement.
 
-## Deployment
+## License
+© Copyright 2020-2025 FIX Protocol Limited
 
-The ultimate build and deployment process has not yet been decided.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
