@@ -1,16 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--********************************************************
+<!--************************************************************************
 *
-*   Generates FIXML Schema from an Orchestra / Repository 2016 file
-*	                
-********************************************************-->
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xso="http://www.w3.org/1999/XSL/TransformAlias" xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+*   Generates FIXML V1.1 Schema files from an Orchestra Version 1.0 XML file
+*
+*	FIXML Schema generation with XSLT
+*   Original concept and some code remnants remain from Kevin Houstoun.
+*	Rewritten by JimN jimn@lasalletech.com
+*	Copyright FIX Protocol Limited
+*
+*	  - Created	5 September 2004 Kevin Houstoun
+*	  - Revised	19 October 2007 Jim N
+*   - Re-created 15 February 2009 Jim N moved to using element and attribute instead of CDATA
+*     restructured for XSLT 2.0 following similar programs created by Phil Oliver.
+*   - Major cleanup 5 June 2010 (PAO) Finished the move to elements from CDATA sections. Removed
+*     much of the remaining hard coding.
+*   - Final Refactoring and Testing 2010-11-17 Jim N
+*   - Added hardcoded batch header fields 2014-05-07 Jim N
+*   - Initial version for the migration to Orchestra as source repository 2019-02-06 Don Mendelson
+*   - Added support for Orchestra appinfo element identifying fields not required in FIXML 2022-11-24 Hanno Klein
+*
+****************************************************************************-->
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xso="http://www.w3.org/1999/XSL/TransformAlias" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:localfn="http://dummy" exclude-result-prefixes="xs localfn"
-xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/dc/elements/1.1/">
+xmlns:fixr="http://fixprotocol.io/2020/orchestra/repository">
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>
 	<xsl:param name="targetDir"/>
+	<!-- Schema date still fixed to release date of FIXML v1.1. Version 1.2 is work in progress -->
+	<xsl:param name="schemaDate">2014-05-07</xsl:param>
 	<xsl:namespace-alias stylesheet-prefix="xso" result-prefix="xs"/>
-	
+
 	<xsl:function name="localfn:cleanUrl">
 		<xsl:param name="url"/>
 		<xsl:value-of select="concat('file:///',translate($url,'\','/'))"/>
@@ -18,23 +36,23 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 	<xsl:template name="generation-info-comment-block">
 		<xsl:text/>
 		<xsl:comment>
-		FIXML Schema <xsl:value-of select="/fixr:repository/@name"/> Version <xsl:value-of select="/fixr:repository/@version"/>	
+		FIXML Schema Version <xsl:value-of select="/fixr:repository/@name"/> <xsl:value-of select="concat(' ',/fixr:repository/substring-after(@version,'_'))"/>
 
 		Generated: <xsl:value-of select="current-dateTime()"/>
 
 		Copyright(c) FIX Protocol Limited. All rights reserved.
 
-        Comments and errors should be posted on the FIX protocol web-site https://www.fixtrading.org/
-</xsl:comment>
+        Comments and errors should be posted on the FIX Protocol web-site https://www.fixtrading.org/
+		</xsl:comment>
 	<xsl:text>
 
-</xsl:text> 
+</xsl:text>
 	</xsl:template>
 	<xsl:template name="fixml-namespace">
-		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
+		<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,'.')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
-		
+
 		<xsl:namespace name="xs">http://www.w3.org/2001/XMLSchema</xsl:namespace>
 		<xsl:namespace name="">
 			<xsl:value-of select="$schemaNamespace"/>
@@ -53,8 +71,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xsl:param name="component"/>
 		<xsl:choose>
 			<!-- XXX: HACK: Special case for legacy compatibility i.e. JimN design errors -->
-			<!-- xsl:when test="$component/Name='HopGrp'">Hop</xsl:when -->
-			<xsl:when test="$component/Name='StandardHeader'">BaseHeader</xsl:when>
+			<xsl:when test="$component/@name='StandardHeader'">BaseHeader</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$component/@name"/>
 			</xsl:otherwise>
@@ -74,15 +91,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xsl:param name="node"/>
 		<xsl:variable name="TYPE" select="local-name($node)"/>
 		<xsl:choose>
-			<xsl:when test="$TYPE = 'component' or $TYPE = 'componentRef'">true</xsl:when>
-			<xsl:otherwise>false</xsl:otherwise>
-		</xsl:choose>
-	</xsl:function>
-	<xsl:function name="localfn:isInlinedComponent" as="xs:boolean">
-		<xsl:param name="node"/>
-		<xsl:variable name="TYPE" select="local-name($node)"/>
-		<xsl:choose>
-			<xsl:when test="$TYPE='component' and contains($node/@rendering, 'fixml=Inlined')">true</xsl:when>
+			<xsl:when test="$TYPE = ('component','componentRef')">true</xsl:when>
 			<xsl:otherwise>false</xsl:otherwise>
 		</xsl:choose>
 	</xsl:function>
@@ -90,7 +99,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xsl:param name="node"/>
 		<xsl:variable name="TYPE" select="local-name($node)"/>
 		<xsl:choose>
-			<xsl:when test="$TYPE = 'group' or $TYPE = 'groupRef'">true</xsl:when>
+			<xsl:when test="$TYPE = ('group','groupRef')">true</xsl:when>
 			<xsl:otherwise>false</xsl:otherwise>
 		</xsl:choose>
 	</xsl:function>
@@ -98,29 +107,33 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xsl:param name="fieldRef"/>
 		<xsl:variable name="TYPE" select="local-name($fieldRef)"/>
 		<xsl:choose>
-			<xsl:when test="$TYPE = 'field' or $TYPE = 'fieldRef'">true</xsl:when>
+			<xsl:when test="$TYPE = ('field','fieldRef')">true</xsl:when>
 			<xsl:otherwise>false</xsl:otherwise>
 		</xsl:choose>
-	</xsl:function>	
+	</xsl:function>
 	<xsl:template name="fixml-components-root">
 		<xso:simpleType name="Version_t">
 			<xso:restriction base="xs:string">
-				<!-- XXX: Not a hack we chose to validate FIX.5.0SP versions -->
-				<xso:pattern value="(FIX.2.7)|(FIX.3.0)|(FIX\.4\.[0-4])|(FIX\.5\.0(SP[1-2]))|(FIXT.1.[1-2])"/>
+				<xso:pattern value="(FIX.2.7)|(FIX.3.0)|(FIX\.4\.[0-4])|(FIX\.5\.0(SP[1-2]))|(FIXT.1.[1-2]|(FIX.Latest))"/>
 			</xso:restriction>
 		</xso:simpleType>
-		<!-- Special case, generate required session component definitions -->
-		<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[@category='Session']|/fixr:repository/fixr:components/fixr:group[@category='Session']">
-			<xsl:call-template name="GenerateElementSequence"/>
+		<!-- Special case, generate required session component definitions (exception: StandardTrailer)-->
+		<xsl:for-each select="/fixr:repository/fixr:components/fixr:component[@category='Session'and not(@name='StandardTrailer')]|/fixr:repository/fixr:groups/fixr:group[@category='Session']">
 			<xsl:variable name="ComponentType">
 				<xsl:choose>
-					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
-					<xsl:when test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'">BlockRepeating</xsl:when>
+					<!-- First test identifies repeating groups, otherwise it can only be a simple component but maybe XML data. -->
+					<!-- Second test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
+					<!-- Second test ignores fields of type XMLData if they are not required for FIXML -->
+					<xsl:when test="local-name(current()) = ('group','groupRef')">BlockRepeating</xsl:when>
+					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id and not(exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))]">XMLDataBlock</xsl:when>
 					<xsl:otherwise>Block</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
+			<xsl:call-template name="GenerateElementSequence">
+				<xsl:with-param name="ComponentType" select="$ComponentType"/>
+			</xsl:call-template>
 			<xsl:choose>
-				<xsl:when test="Name='StandardHeader'">
+				<xsl:when test="@name='StandardHeader'">
 					<xsl:call-template name="GenerateAttributeGroup">
 						<xsl:with-param name="ComponentType" select="$ComponentType"/>
 						<xsl:with-param name="MakeAllReferencesOptional" select="1"/>
@@ -133,7 +146,9 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 					</xsl:call-template>
 				</xsl:otherwise>
 			</xsl:choose>
-			<xsl:call-template name="GenerateComponent"/>
+			<xsl:call-template name="GenerateComponent">
+				<xsl:with-param name="ComponentType" select="$ComponentType"/>
+			</xsl:call-template>
 		</xsl:for-each>
 		<!-- Message Header -->
 		<xso:attributeGroup name="MessageHeaderAttributes"> </xso:attributeGroup>
@@ -148,7 +163,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xso:group name="BatchHeaderElements">
 			<xso:sequence/>
 		</xso:group>
-		<xso:attributeGroup name="BatchHeaderAttributes"/>			
+		<xso:attributeGroup name="BatchHeaderAttributes"/>
 		<xso:complexType name="BatchHeader_t">
 			<xso:complexContent>
 				<xso:extension base="BaseHeader_t">
@@ -176,7 +191,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xso:attributeGroup name="BatchAttributes">
 	        <xso:attribute name="ID" type="BatchID_t" use="optional"/>
 	        <xso:attribute name="TotMsg" type="BatchTotalMessages_t" use="optional"/>
-	        <xso:attribute name="ProcMode" type="BatchProcessMode_enum_t" use="optional"/>		
+	        <xso:attribute name="ProcMode" type="BatchProcessMode_enum_t" use="optional"/>
 		</xso:attributeGroup>
 		<xso:complexType name="Batch_t">
 			<xso:sequence>
@@ -185,8 +200,8 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 			<xso:attributeGroup ref="BatchAttributes"/>
 		</xso:complexType>
 		<!-- FIXML Root Element Declaration -->
+		<!-- FIX version as of EP260 only "FIX.Latest"-->
 		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
-		<xsl:variable name="schemaDate" select="/fixr:repository/fixr:metadata/dc:date"/>
 		<xso:attributeGroup name="FixmlAttributes">
 			<xso:attribute name="v" type="Version_t" fixed="{$VersionString}"/>
 			<xso:attribute name="r" type="xs:string" use="optional"/>
@@ -223,7 +238,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xsl:param name="CategoryID"/>
 		<xsl:param name="CategoryAbbrName"/>
 		<xsl:param name="EnumDatatype"/>
-		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
+		<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,'.')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
 		<xso:appinfo>
@@ -241,7 +256,8 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 				<xsl:if test="$Type != ''">
 					<xsl:attribute name="Type" select="$Type"/>
 				</xsl:if>
-				<xsl:if test="$EnumDatatype">
+				<!-- Exception: field is the original one with the code set (they share the same ID)-->
+				<xsl:if test="$EnumDatatype and not($Tag = $EnumDatatype)">
 					<xsl:attribute name="UsesEnumsFromTag" select="$EnumDatatype"/>
 				</xsl:if>
 				<xsl:if test="$AbbrName">
@@ -268,9 +284,10 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 					<xsl:choose>
 						<xsl:when test="localfn:isComponent(current())">
 							<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=current()/@id]"/>
+							<xsl:variable name="componentRef" select="/fixr:repository/fixr:messages/fixr:message[@id=$MessID]/fixr:structure/fixr:componentRef[@id=$component/@id]"/>
 							<xsl:if test="$component/@name != 'StandardHeader' and $component/@name != 'StandardTrailer'">
 								<xso:element name="{$component/@abbrName}" type="{localfn:generateCompType($component)}">
-									<xsl:if test="not($component/@presence = 'required')">
+									<xsl:if test="not($componentRef/@presence = 'required')">
 										<xsl:attribute name="minOccurs">0</xsl:attribute>
 									</xsl:if>
 								</xso:element>
@@ -278,7 +295,11 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 						</xsl:when>
 						<xsl:when test="localfn:isGroup(current())">
 							<xsl:variable name="group" select="/fixr:repository/fixr:groups/fixr:group[@id=current()/@id]"/>
+							<xsl:variable name="groupRef" select="/fixr:repository/fixr:messages/fixr:message[@id=$MessID]/fixr:structure/fixr:groupRef[@id=$group/@id]"/>
 							<xso:element name="{$group/@abbrName}" type="{localfn:generateCompType($group)}">
+								<xsl:if test="not($groupRef/@presence = 'required')">
+									<xsl:attribute name="minOccurs">0</xsl:attribute>
+								</xsl:if>
 								<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
 							</xso:element>
 						</xsl:when>
@@ -289,6 +310,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 			<!-- Required Attributes-->
 			<xso:attributeGroup name="{@name}Attributes">
 				<xsl:for-each select="/fixr:repository/fixr:messages/fixr:message[@id = $MessID]/fixr:structure/child::*">
+					<!-- No special handling of fields for XML definitions of securities needed here as they are never on the meesage root level -->
 					<xsl:if test="localfn:isField(current())">
 						<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=current()/@id]"/>
 						<xso:attribute>
@@ -313,16 +335,16 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 					</xsl:if>
 				</xsl:for-each>
 			</xso:attributeGroup>
-			<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
+			<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,'.')"/>
 			<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 			<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
 			<!-- Complex Type that implements message-->
 			<xso:complexType name="{@name}_message_t" final="#all">
-				<xsl:variable name="sid" select="/fixr:repository/fixr:categories/fixr:category[@id=$MessageCategory]/@section"/>
+				<xsl:variable name="sid" select="/fixr:repository/fixr:categories/fixr:category[@name=$MessageCategory]/@section"/>
 				<xso:annotation>
 					<xso:documentation xml:lang="en">
-						<xsl:value-of select="@name"/> can be found in Volume <xsl:value-of select="/fixr:repository/fixr:sections/fixr:section[@id=$sid]/@volume"/> of the
-						specification</xso:documentation>
+						<xsl:value-of select="@name"/> can be found at https://www.fixtrading.org/online-specification/business-area-<xsl:value-of select="$sid"/>#msg<xsl:value-of select="@id"/>
+					</xso:documentation>
 					<xso:appinfo>
 						<xsl:element name="fm:Xref" namespace="{$fmNamespace}">
 							<xsl:attribute name="Protocol">FIX</xsl:attribute>
@@ -352,8 +374,10 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 			<xsl:sort select="@id"/>
 			<xsl:variable name="ComponentType">
 				<xsl:choose>
+					<!-- First test identifies repeating groups, otherwise it can only be a simple component but maybe XML data. -->
+					<!-- Second test checks all fields of type XMLData for a field whose id is used as a field reference in the current component or group -->
+					<xsl:when test="local-name(current()) = ('group','groupRef')">BlockRepeating</xsl:when>
 					<xsl:when test="/fixr:repository/fixr:fields/fixr:field[@type='XMLData' and @id = current()/fixr:fieldRef/@id]">XMLDataBlock</xsl:when>
-					<xsl:when test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'">BlockRepeating</xsl:when>
 					<xsl:otherwise>Block</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
@@ -374,15 +398,22 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xsl:param name="component"/>
 		<xsl:param name="presence"/>
 			<xso:element name="{$component/@abbrName}" type="{localfn:generateCompType($component)}">
-				<xsl:choose>
-					<xsl:when test="local-name($component) = 'group' or local-name($component) = 'groupRef'">
-						<xsl:attribute name="minOccurs">0</xsl:attribute>
-						<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
-					</xsl:when>
-					<xsl:when test="not($presence = 'required')">
-						<xsl:attribute name="minOccurs">0</xsl:attribute>
-					</xsl:when>
-				</xsl:choose>
+			<!-- Option 1: Only set minOccurs and maxOccurs when different from the default value 1 -->
+				<!-- <xsl:if test="not($presence = 'required')">
+					<xsl:attribute name="minOccurs">0</xsl:attribute>
+				</xsl:if>
+				<xsl:if test="local-name(current()) = 'group' or local-name(current()) = 'groupRef'">
+					<xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
+				</xsl:if> -->
+			<!-- Option 2: Explictly set minOccurs and maxOccurs regardless of default value -->
+			<xsl:choose>
+				<xsl:when test="not($presence = 'required')"><xsl:attribute name="minOccurs">0</xsl:attribute></xsl:when>
+				<xsl:otherwise><xsl:attribute name="minOccurs">1</xsl:attribute></xsl:otherwise>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="local-name(current()) = ('group','groupRef')"><xsl:attribute name="maxOccurs">unbounded</xsl:attribute></xsl:when>
+				<xsl:otherwise><xsl:attribute name="maxOccurs">1</xsl:attribute></xsl:otherwise>
+			</xsl:choose>
 			</xso:element>
 	</xsl:template>
 	<xsl:template name="SelectElements">
@@ -391,12 +422,14 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 			<xsl:when test="localfn:isComponent(.)">
 				<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=current()/@id]"/>
 				<xsl:choose>
-					<xsl:when test="localfn:isInlinedComponent($component)">
-					
-						<xsl:comment>Start of inlined elements from component: <xsl:value-of select="$component/@name"/>
+					<!-- Components are inlined if their abbreviated name is identical to their parent's in the given context (exceptions explicitly excluded) -->
+					<!-- Example: InstrmtLegGrp contains InstrumentLeg -->
+					<xsl:when test="$component/@abbrName = ../@abbrName and not(../@name='QuotReqLegsGrp')">
+
+						<xsl:comment>Start of inlined elements from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',../@name)"/>
 						</xsl:comment>
 						<xso:group ref="{localfn:fixupCompName($component)}Elements"/>
-						<xsl:comment>End of inlined elements from component: <xsl:value-of select="$component/@name"/>
+						<xsl:comment>End of inlined elements from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',../@name)"/>
 						</xsl:comment>
 					</xsl:when>
 					<xsl:otherwise>
@@ -404,7 +437,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 							<xsl:with-param name="component" select="$component"/>
 							<xsl:with-param name="presence" select="current()/@presence"/>
 						</xsl:call-template>
-				</xsl:otherwise>
+					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:when>
 			<xsl:when test="localfn:isGroup(.)">
@@ -419,7 +452,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 	</xsl:template>
 	<xsl:template name="GenerateElementSequence">
 		<xsl:param name="ComponentType"/>
-			<xsl:if test="not(ComponentType = 'XMLDataBlock')">
+		<xsl:if test="not($ComponentType = 'XMLDataBlock')">
 			<xso:group name="{localfn:fixupCompName(.)}Elements">
 				<xso:sequence>
 					<xsl:call-template name="SelectElements"/>
@@ -433,29 +466,27 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xsl:param name="MsgCategory"/>
 		<xsl:param name="Presence"/>
 		<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
-		<xsl:if test="not($field/@type = 'data' or $field/@type = 'Length' or $field/@type = 'XMLData')">
-			<xso:attribute>
-				<xsl:choose>
-					<xsl:when test="$field/@baseCategory=$MsgCategory">
-						<xsl:attribute name="name" select="$field/@baseCategoryAbbrName"/>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:attribute name="name" select="$field/@abbrName"/>
-					</xsl:otherwise>
-				</xsl:choose>
-				<xsl:attribute name="type" select="concat($field/@name,'_t')"/>
-				<xsl:choose>
-					<!-- XXX HACK: Add the parameter to this method just to make it so
-									 MsgSeqNum in the StandardHeader could be made optional -->
-					<xsl:when test="$Presence='required' and $MakeAllReferencesOptional=0">
-						<xsl:attribute name="use">required</xsl:attribute>
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:attribute name="use">optional</xsl:attribute>
-					</xsl:otherwise>
-				</xsl:choose>
+		<xso:attribute>
+			<xsl:choose>
+				<xsl:when test="$field/@baseCategory=$MsgCategory">
+					<xsl:attribute name="name" select="$field/@baseCategoryAbbrName"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="name" select="$field/@abbrName"/>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:attribute name="type" select="concat($field/@name,'_t')"/>
+			<xsl:choose>
+				<!-- XXX HACK: Add the parameter to this method just to make it so
+									     MsgSeqNum in the StandardHeader could be made optional -->
+				<xsl:when test="$Presence='required' and $MakeAllReferencesOptional=0">
+					<xsl:attribute name="use">required</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="use">optional</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xso:attribute>
-		</xsl:if>	
 	</xsl:template>
 	<xsl:template name="SelectAttributes">
 		<xsl:param name="ComponentType"/>
@@ -463,26 +494,27 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xsl:param name="MessID"/>
 		<xsl:param name="MsgCategory"/>
 		<xsl:for-each select="child::*">
-		<xsl:variable name="TagID" select="@id"/>
+		  <xsl:variable name="TagID" select="@id"/>
 			<xsl:choose>
-				<xsl:when test="localfn:isField(.)">
-				<xsl:variable name="field" select="/fixr:repository/fixr:fields/fixr:field[@id=$TagID]"/>
-				<xsl:variable name="TYPE" select="$field/@type"/>
-				<xsl:call-template name="GenerateAttribute">
-					<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
-					<xsl:with-param name="TagID" select="$TagID"/>
-					<xsl:with-param name="MsgCategory" select="$MsgCategory"/>
-					<xsl:with-param name="Presence" select="@presence"/>
-				</xsl:call-template>
-			</xsl:when>
-			<xsl:when test="localfn:isComponent(.)">
+				<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
+				<xsl:when test="localfn:isField(.) and not(exists(/fixr:repository/fixr:fields/fixr:field[@id=$TagID and exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML'])]))">
+					<xsl:call-template name="GenerateAttribute">
+						<xsl:with-param name="MakeAllReferencesOptional" select="$MakeAllReferencesOptional"/>
+						<xsl:with-param name="TagID" select="$TagID"/>
+						<xsl:with-param name="MsgCategory" select="$MsgCategory"/>
+						<xsl:with-param name="Presence" select="@presence"/>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:when test="localfn:isComponent(.)">
 					<xsl:variable name="component" select="/fixr:repository/fixr:components/fixr:component[@id=$TagID]"/>
-					<xsl:if test="localfn:isInlinedComponent($component)">
-					
-						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/>
+					<!-- Components are inlined if their abbreviated name is identical to their parent's in the given context (exceptions explicitly excluded) -->
+					<!-- Example: InstrmtLegGrp contains InstrumentLeg -->
+					<xsl:if test="$component/@abbrName = ../@abbrName and not(../@name='QuotReqLegsGrp')">
+
+						<xsl:comment>Start of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',../@name)"/>
 						</xsl:comment>
 						<xso:attributeGroup ref="{localfn:fixupCompName($component)}Attributes"/>
-						<xsl:comment>End of inlined attributes from component: <xsl:value-of select="$component/@name"/>
+						<xsl:comment>End of inlined attributes from component: <xsl:value-of select="$component/@name"/> <xsl:value-of select="concat(' in ',../@name)"/>
 						</xsl:comment>
 					</xsl:if>
 				</xsl:when>
@@ -507,7 +539,14 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xsl:param name="ComponentType"/>
 		<xsl:variable name="MsgElemID" select="@id"/>
 		<xso:complexType>
-			<xsl:attribute name="name"><xsl:value-of select="@name"/>_Block_t</xsl:attribute>
+			<xsl:choose>
+				<xsl:when test="@name='StandardHeader'">
+					<xsl:attribute name="name">BaseHeader_t</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="name"><xsl:value-of select="@name"/>_Block_t</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
 			<xso:annotation>
 				<xsl:call-template name="appinfo-Xref-builder">
 					<xsl:with-param name="name" select="@name"/>
@@ -548,7 +587,12 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 				<xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
-		
+		<xsl:if test="$CODESET">
+			<xsl:comment>
+				<xsl:value-of select="@name"/>(<xsl:value-of select="$TAGNUM"/>) defined in
+				implementation file</xsl:comment>
+		</xsl:if>
+
 		<!-- create Field Type name - either _t or *_enum_t -->
 		<xsl:variable name="TYPE_NAME">
 			<xsl:value-of select="@name"/>
@@ -561,8 +605,9 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xso:simpleType>
 			<xsl:attribute name="name"><xsl:value-of select="$TYPE_NAME"/></xsl:attribute>
 			<xso:annotation>
+				<!-- Elaboration is not retrieved -->
 				<xsl:call-template name="DocumentationBuilder">
-					<xsl:with-param name="DocText" select="current()/fixr:annotation/fixr:documentation"/>
+					<xsl:with-param name="DocText" select="current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS']"/>
 				</xsl:call-template>
 				<xsl:call-template name="appinfo-Xref-builder">
 					<xsl:with-param name="name" select="@name"/>
@@ -572,7 +617,8 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 					<xsl:with-param name="AbbrName" select="@abbrName"/>
 					<xsl:with-param name="CategoryID" select="@baseCategory"/>
 					<xsl:with-param name="CategoryAbbrName" select="@baseCategoryAbbrName"/>
-					<!--<xsl:with-param name="EnumDatatype" select="EnumDatatype"/>-->
+					<!-- ID from codeset required for UsesEnumsFromTag attribute in FIXML -->
+					<xsl:with-param name="EnumDatatype" select="$CODESET/@id"/>
 				</xsl:call-template>
 				<xsl:if test="$CODESET">
 					<xsl:call-template name="AppinfoEnumsDocBuilder">
@@ -583,8 +629,9 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 			<xsl:variable name="DATATYPE" select="/fixr:repository/fixr:datatypes/fixr:datatype[@name=$TYPE]"/>
 			<xsl:variable name="OUTPUT_TYPE">
 				<xsl:choose>
-					<xsl:when test="$DATATYPE/fixr:mappedDatatype[@standard='XML']">
-						<xsl:value-of select="$DATATYPE/fixr:mappedDatatype[@standard='XML']/@base"/>
+					<!-- Only use mapped datatype if the FIX datatype is a base XML datatype, e.g. int results in xs:integer. -->
+					<xsl:when test="$DATATYPE/fixr:mappedDatatype[@standard='XML' and @builtin='true']">
+						<xsl:value-of select="$DATATYPE/fixr:mappedDatatype[@standard='XML' and @builtin='true']/@base"/>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:value-of select="$TYPE"/>
@@ -595,34 +642,34 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 				<xsl:attribute name="base" select="$OUTPUT_TYPE"/>
 				<xsl:if test="$CODESET">
 					<xsl:choose>
-						<xsl:when test="Type = 'MultipleCharValue'">
+						<xsl:when test="$TYPE = 'MultipleCharValue'">
 							<xsl:attribute name="base">xs:string</xsl:attribute>
 							<xso:pattern>
 								<xsl:variable name="PATTERN_STRING">
 									<xsl:value-of>[</xsl:value-of>
 									<xsl:for-each select="$CODESET/fixr:code">
-										<xsl:sort select="sort" data-type="number"/>
-										<xsl:value-of select="value"/>
+										<xsl:sort select="@sort" data-type="number"/>
+										<xsl:value-of select="@value"/>
 									</xsl:for-each>
 									<xsl:value-of>](\s[</xsl:value-of>
 									<xsl:for-each select="$CODESET/fixr:code">
-										<xsl:sort select="sort" data-type="number"/>
-										<xsl:value-of select="value"/>
+										<xsl:sort select="@sort" data-type="number"/>
+										<xsl:value-of select="@value"/>
 									</xsl:for-each>
 									<xsl:value-of>])*</xsl:value-of>
 								</xsl:variable>
 								<xsl:attribute name="value" select="$PATTERN_STRING"/>
 							</xso:pattern>
 						</xsl:when>
-						<xsl:when test="Type = 'MultipleStringValue'">
+						<xsl:when test="$TYPE = 'MultipleStringValue'">
 							<xsl:attribute name="base">xs:string</xsl:attribute>
 							<xso:pattern>
 								<xsl:variable name="PATTERN_STRING">
 									<xsl:value-of>(</xsl:value-of>
 									<xsl:for-each select="$CODESET/fixr:code">
-										<xsl:sort select="sort" data-type="number"/>
+										<xsl:sort select="@sort" data-type="number"/>
 										<xsl:value-of>(</xsl:value-of>
-										<xsl:value-of select="value"/>
+										<xsl:value-of select="@value"/>
 										<xsl:value-of>)</xsl:value-of>
 										<xsl:if test="position() &lt; count($CODESET/fixr:code)">
 											<xsl:value-of>|</xsl:value-of>
@@ -630,9 +677,9 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 									</xsl:for-each>
 									<xsl:value-of>)(\s(</xsl:value-of>
 									<xsl:for-each select="$CODESET/fixr:code">
-										<xsl:sort select="sort" data-type="number"/>
+										<xsl:sort select="@sort" data-type="number"/>
 										<xsl:value-of>(</xsl:value-of>
-										<xsl:value-of select="value"/>
+										<xsl:value-of select="@value"/>
 										<xsl:value-of>)</xsl:value-of>
 										<xsl:if test="position() &lt;  count($CODESET/fixr:code)">
 											<xsl:value-of>|</xsl:value-of>
@@ -645,7 +692,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:for-each select="$CODESET/fixr:code">
-								<xsl:sort select="sort" data-type="number"/>
+								<xsl:sort select="@sort" data-type="number"/>
 								<xso:enumeration>
 									<xsl:attribute name="value" select="@value"/>
 								</xso:enumeration>
@@ -659,16 +706,34 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 	<!-- generates an appinfo element with Code Set defined in the FIXML Schema Metadata file -->
 	<xsl:template name="AppinfoEnumsDocBuilder">
 		<xsl:param name="CODES"/>
-		<xsl:variable name="VersionString" select="/fixr:repository/@name"/>
+		<xsl:variable name="VersionString" select="/fixr:repository/substring-after(@name,'.')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
+		<!-- Prepare variable for the output of multiple lines per enum -->
+		<xsl:variable name='newline'><xsl:text>
+		</xsl:text></xsl:variable>
 		<!-- Add enums appinfo section -->
 		<xso:appinfo>
 			<xsl:for-each select="$CODES/fixr:code">
-				<xsl:sort select="sort" data-type="number"/>
+				<xsl:sort select="@sort" data-type="number"/>
 				<xsl:element name="fm:EnumDoc" namespace="{$fmNamespace}">
 					<xsl:attribute name="value" select="@value"/>
-					<xsl:value-of select="@name"/>
+					<!-- Name of the value (not the symbolic name) to be retrieved from its synopsis. Remove leading/trailing whitespaces -->
+					<!-- Synopsis may contain up to three paragraphs (<documentation> elements) -->
+					<xsl:variable name="description1" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][1])"/>
+					<xsl:variable name="description2" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][2])"/>
+					<xsl:variable name="description3" select="normalize-space(current()/fixr:annotation/fixr:documentation[@purpose='SYNOPSIS'][3])"/>
+					<xsl:choose>
+						<xsl:when test="$description3">
+							<xsl:value-of select="concat($description1, $newline, $description2, $newline, $description3)"/>
+						</xsl:when>
+						<xsl:when test="$description2">
+							<xsl:value-of select="concat($description1, $newline, $description2)"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="$description1"/>
+						</xsl:otherwise>
+					</xsl:choose>
 				</xsl:element>
 			</xsl:for-each>
 		</xso:appinfo>
@@ -698,11 +763,11 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 		<xsl:apply-templates/>
 	</xsl:template>
 	<xsl:template match="fixr:repository">
-		<xsl:variable name="VersionString" select="@name"/>
+		<xsl:variable name="VersionString" select="substring-after(@name,'.')"/>
 		<xsl:variable name="FileSuffix" select="concat('-',$VersionString,'.xsd')"/>
 		<xsl:variable name="schemaNamespace" select="concat('http://www.fixprotocol.org/FIXML-',$VersionString)"/>
 		<xsl:variable name="fmNamespace" select="concat($schemaNamespace,'/METADATA')"/>
-	
+
 		<!-- generate the metadata schema file -->
 		<xsl:result-document href="{localfn:cleanUrl(concat($targetDir,'/','fixml-metadata',$FileSuffix))}">
 			<xsl:call-template name="generation-info-comment-block"/>
@@ -730,7 +795,7 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 						<xso:attribute name="Section" type="xs:string" use="optional"/>
 						<xso:attribute name="Category" type="xs:string" use="optional"/>
 						<xso:attribute name="CategoryAbbrName" type="xs:string" use="optional"/>
-						<!--<xso:attribute name="UsesEnumsFromTag" type="xs:string" use="optional"/>-->
+						<xso:attribute name="UsesEnumsFromTag" type="xs:string" use="optional"/>
 					</xso:complexType>
 				</xso:element>
 				<xso:element name="EnumDoc">
@@ -750,18 +815,18 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 			<xso:schema>
 				<xsl:call-template name="fixml-namespace"/>
 				<!-- get a list of the sections pretrade,trade,posttrade,infrastructure, etc.)-->
-				<xsl:for-each select="/fixr:repository/fixr:sections/fixr:section/@FIXMLFileName">
+				<xsl:for-each select="/fixr:repository/fixr:sections/fixr:section[not(@name = 'Session')]/@FIXMLFileName">
 					<xso:include schemaLocation="{concat('fixml-',.,$FileSuffix)}"/>
 				</xsl:for-each>
 			</xso:schema>
 		</xsl:result-document>
 		<!-- generate section files that contain includes for the categories -->
-		<xsl:for-each select="/fixr:repository/fixr:sections/fixr:section">
+		<xsl:for-each select="/fixr:repository/fixr:sections/fixr:section[not(@name = 'Session')]">
 			<xsl:result-document href="{localfn:cleanUrl(concat($targetDir,'/','fixml-',@FIXMLFileName,$FileSuffix))}">
 				<xsl:call-template name="generation-info-comment-block"/>
 				<xso:schema>
 					<xsl:call-template name="fixml-namespace"/>
-					<xsl:variable name="SectionID" select="@id"/>
+					<xsl:variable name="SectionID" select="@name"/>
 					<xsl:for-each select="/fixr:repository/fixr:categories/fixr:category[@section = $SectionID]">
 						<xso:include>
 							<xsl:attribute name="schemaLocation"><xsl:value-of select="concat('fixml-',@FIXMLFileName,'-impl',$FileSuffix)"/></xsl:attribute>
@@ -771,14 +836,14 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 			</xsl:result-document>
 		</xsl:for-each>
 		<!-- generate message category base files -->
-		<xsl:for-each select="/fixr:repository/fixr:categories/fixr:category[@componentType='Message' and not(@id = 'Session')]">
+		<xsl:for-each select="/fixr:repository/fixr:categories/fixr:category[@componentType='Message' and not(@name = 'Session')]">
 			<xsl:variable name="fn">
 				<xsl:value-of select="@FIXMLFileName"/>
 			</xsl:variable>
 			<xsl:result-document href="{localfn:cleanUrl(concat($targetDir,'/','fixml-',$fn,'-base',$FileSuffix))}">
 				<xsl:variable name="FileName">
 					<xsl:choose>
-						<xsl:when test="@id = 'Common'">fields-impl</xsl:when>
+						<xsl:when test="@name = 'Common'">fields-impl</xsl:when>
 						<xsl:otherwise>components-impl</xsl:otherwise>
 					</xsl:choose>
 				</xsl:variable>
@@ -788,20 +853,20 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 					<xso:include>
 						<xsl:attribute name="schemaLocation"><xsl:value-of select="concat('fixml-',$FileName,$FileSuffix)"/></xsl:attribute>
 					</xso:include>
-					<xsl:if test="@id = 'Common'">
+					<xsl:if test="@name = 'Common'">
 						<xsl:call-template name="fixml-components-root"/>
 					</xsl:if>
 					<xsl:call-template name="MessageTemplate">
-						<xsl:with-param name="MessageCategory" select="@id"/>
+						<xsl:with-param name="MessageCategory" select="@name"/>
 					</xsl:call-template>
 					<xsl:call-template name="ComponentTemplate">
-						<xsl:with-param name="MessageCategory" select="@id"/>
+						<xsl:with-param name="MessageCategory" select="@name"/>
 					</xsl:call-template>
 				</xso:schema>
 			</xsl:result-document>
 		</xsl:for-each>
 		<!-- generate message category impl files -->
-		<xsl:for-each select="/fixr:repository/fixr:categories/fixr:category[@componentType='Message' and not(@id = 'Session')]/@FIXMLFileName">
+		<xsl:for-each select="/fixr:repository/fixr:categories/fixr:category[@componentType='Message' and not(@name = 'Session')]/@FIXMLFileName">
 			<xsl:result-document href="{localfn:cleanUrl(concat($targetDir,'/','fixml-',.,'-impl',$FileSuffix))}">
 				<xsl:call-template name="generation-info-comment-block"/>
 				<xso:schema>
@@ -820,7 +885,8 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 				<xso:include>
 					<xsl:attribute name="schemaLocation" select="concat('fixml-datatypes',$FileSuffix)"/>
 				</xso:include>
-				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(@type='NumInGroup')]">
+				<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
+				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
 					<xsl:call-template name="simpleTypeBuilder"/>
 				</xsl:for-each>
@@ -834,9 +900,9 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 				<xso:include>
 					<xsl:attribute name="schemaLocation"><xsl:value-of select="concat('fixml-fields-base',$FileSuffix)"/></xsl:attribute>
 				</xso:include>
-				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field">
+				<!-- Exclude fields not required for XML, e.g. NumInGroup and non-encoding length fields -->
+				<xsl:for-each select="/fixr:repository/fixr:fields/fixr:field[not(exists(fixr:annotation[1]/fixr:appinfo[@purpose='FIXML']))]">
 					<xsl:sort select="@id" data-type="number" order="ascending"/>
-					<xsl:variable name="FldTag" select="@id"/>
 					<xsl:variable name="TYPEORCODESETNAME" select="@type"/>
 					<xsl:variable name="CODESET" select="/fixr:repository/fixr:codeSets/fixr:codeSet[@name=$TYPEORCODESETNAME]"/>
 					<xsl:choose>
@@ -845,14 +911,16 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 								<xsl:when test="@unionDataType">
 									<xsl:call-template name="simple-type-union">
 										<xsl:with-param name="TypeName" select="@name"/>
-										<xsl:with-param name="EnumTypeName" select="@name"/>
+										<!-- Strip "CodeSet" from the enumeration type name to avoid change to FIXML schema generated from Basis repository -->
+										<xsl:with-param name="EnumTypeName" select="substring-before(@type,'CodeSet')"/>
 										<xsl:with-param name="UnionTypeName" select="@unionDataType"/>
 									</xsl:call-template>
 								</xsl:when>
 								<xsl:otherwise>
 									<xsl:call-template name="simple-type-restriction">
 										<xsl:with-param name="TypeName" select="@name"/>
-										<xsl:with-param name="EnumTypeName" select="@name"/>
+										<!-- Strip "CodeSet" from the enumeration type name to avoid change to FIXML schema generated from Basis repository -->
+										<xsl:with-param name="EnumTypeName" select="substring-before(@type,'CodeSet')"/>
 									</xsl:call-template>
 								</xsl:otherwise>
 							</xsl:choose>
@@ -867,7 +935,8 @@ xmlns:fixr="http://fixprotocol.io/2016/fixrepository" xmlns:dc="http://purl.org/
 			<xso:schema>
 				<xsl:call-template name="fixml-namespace"/>
 				<xsl:for-each select="/fixr:repository/fixr:datatypes/fixr:datatype">
-					<xsl:if test="child::fixr:mappedDatatype[@standard='XML']">
+					<!-- Only use mapped datatype if it is not already a base XML datatype. -->
+					<xsl:if test="child::fixr:mappedDatatype[@standard='XML' and @builtin='false']">
 						<xso:simpleType>
 							<xsl:attribute name="name" select="@name"/>
 							<xso:annotation>
