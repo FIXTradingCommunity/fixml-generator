@@ -27,7 +27,7 @@ Any standards-compliant XSLT 2.0 processor. The test wrapper uses Saxon-HE.
 A Maven/Java wrapper is provided to invoke and test the script. This is not a run-time requirement.
 
 ## License
-© Copyright 2020-2025 FIX Protocol Limited
+Copyright 2019-2025 FIX Protocol Limited
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
