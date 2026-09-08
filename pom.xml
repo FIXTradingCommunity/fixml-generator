@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.fixprotocol.orchestra</groupId>
 	<artifactId>fixml-generator</artifactId>
-	<version>1.4.2-SNAPSHOT</version>
+	<version>1.4.3-SNAPSHOT</version>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>FIXML schema generator from from Orchestra</description>
 	<prerequisites>
